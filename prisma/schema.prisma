@@ -1,0 +1,55 @@
+// Schéma Prisma pour EcoScience — Plateforme InNOScEnce
+// Provider: MongoDB Atlas
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// Modèle Utilisateur (élève)
+model User {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  email          String   @unique
+  password       String   // hashé avec bcrypt
+  xp             Int      @default(0)
+  level          Int      @default(1)
+  completedZones String[]
+  createdAt      DateTime @default(now())
+}
+
+// Modèle Concours
+model Contest {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String // en arabe
+  description String
+  image       String
+  order       Int
+  zones       Zone[]
+}
+
+// Modèle Zone (niveau dans un concours)
+model Zone {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  title       String     // en arabe
+  description String
+  order       Int
+  contestId   String     @db.ObjectId
+  contest     Contest    @relation(fields: [contestId], references: [id])
+  questions   Question[]
+}
+
+// Modèle Question (quiz Q&A)
+model Question {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  text    String   // en arabe
+  options String[]
+  answer  Int      // index de la bonne réponse (0-based)
+  tip     String   // astuce éducative en arabe
+  zoneId  String   @db.ObjectId
+  zone    Zone     @relation(fields: [zoneId], references: [id])
+}

@@ -1,101 +1,164 @@
-import Image from "next/image";
+// PAGE 1 — Landing Page / Accueil
+// Présentation du projet InNOScEnce avec la tortue marine animée
+'use client';
 
-export default function Home() {
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import Image from 'next/image';
+import Turtle from '@/components/Turtle';
+
+// Composant bulle décorative
+function Bubble({ delay, size, left }: { delay: number; size: number; left: string }) {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <motion.div
+      className="absolute bottom-0 rounded-full bg-white/10"
+      style={{ width: size, height: size, left }}
+      animate={{ y: [0, -800], opacity: [0, 0.6, 0] }}
+      transition={{ duration: 6 + Math.random() * 4, repeat: Infinity, delay, ease: 'easeOut' }}
+    />
+  );
+}
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+// Composant poisson décoratif
+function Fish({ delay, y, direction }: { delay: number; y: string; direction: 'rtl' | 'ltr' }) {
+  return (
+    <motion.div
+      className="absolute text-2xl"
+      style={{ top: y }}
+      animate={{
+        x: direction === 'rtl' ? ['100vw', '-100px'] : ['-100px', '100vw'],
+        y: [0, -20, 0, 20, 0],
+      }}
+      transition={{ duration: 12, repeat: Infinity, delay, ease: 'linear' }}
+    >
+      {direction === 'rtl' ? '🐟' : '🐠'}
+    </motion.div>
+  );
+}
+
+export default function LandingPage() {
+  return (
+    <main className="relative min-h-screen overflow-hidden bg-ocean-gradient">
+      {/* Vagues en arrière-plan */}
+      <div className="absolute bottom-0 left-0 right-0 overflow-hidden">
+        <svg className="relative w-[200%] h-24" viewBox="0 0 1440 120" preserveAspectRatio="none"
+          style={{ animation: 'oceanWave 8s ease-in-out infinite' }}>
+          <path d="M0,40 C360,120 720,0 1080,80 C1260,110 1380,40 1440,60 L1440,120 L0,120 Z" fill="rgba(255,255,255,0.1)" />
+        </svg>
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 overflow-hidden">
+        <svg className="relative w-[200%] h-20" viewBox="0 0 1440 120" preserveAspectRatio="none"
+          style={{ animation: 'oceanWave 6s ease-in-out infinite reverse' }}>
+          <path d="M0,80 C360,20 720,100 1080,40 C1260,10 1380,80 1440,60 L1440,120 L0,120 Z" fill="rgba(255,255,255,0.05)" />
+        </svg>
+      </div>
+
+      {/* Bulles décoratives */}
+      {[...Array(8)].map((_, i) => (
+        <Bubble key={i} delay={i * 1.5} size={8 + Math.random() * 24} left={`${5 + Math.random() * 90}%`} />
+      ))}
+
+      {/* Poissons */}
+      <Fish delay={0} y="60%" direction="rtl" />
+      <Fish delay={4} y="75%" direction="ltr" />
+      <Fish delay={8} y="45%" direction="rtl" />
+
+      {/* Contenu principal */}
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-12">
+        {/* Logo InNOScEnce Principal */}
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="mb-6 flex justify-center"
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <Image src="/images/ecoscience-text-logo.png" alt="InNOScEnce" width={300} height={300}
+            className="drop-shadow-2xl object-contain" priority />
+        </motion.div>
+
+        {/* Sous-titre */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="text-lg md:text-xl text-ocean-light/90 mb-2 text-center font-semibold"
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          مشروع InNOScEnce
+        </motion.p>
+
+        {/* Description */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="text-xl md:text-2xl text-white/90 mb-4 text-center max-w-2xl leading-relaxed"
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          🌊 انطلق في مغامرة علمية مع السلحفاة البحرية!
+        </motion.p>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
+          className="text-base md:text-lg text-white/70 mb-10 text-center max-w-xl leading-relaxed"
+        >
+          اكتشف علوم البيئة من خلال تجارب ممتعة ومسابقات تفاعلية. تعلّم كيف تحمي كوكبنا! 🌍
+        </motion.p>
+
+        {/* Tortue mascotte */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1, type: 'spring', stiffness: 200 }}
+          className="mb-8"
+        >
+          <Turtle mood="waving" size="lg" message="هيا بنا! المغامرة تنتظرنا 🌊" />
+        </motion.div>
+
+        {/* Bouton CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.3 }}
+        >
+          <Link href="/login">
+            <motion.button
+              whileHover={{ scale: 1.08, boxShadow: '0 0 40px rgba(126, 217, 87, 0.4)' }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-success hover:bg-success-500 text-white font-bold text-2xl
+                         py-5 px-12 rounded-full shadow-xl transition-all duration-300
+                         flex items-center gap-3"
+            >
+              <span>ابدأ المغامرة</span>
+              <motion.span animate={{ x: [0, -8, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                🚀
+              </motion.span>
+            </motion.button>
+          </Link>
+        </motion.div>
+
+        {/* Features */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.6 }}
+          className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full"
+        >
+          {[
+            { icon: '🧪', title: 'تجارب علمية', desc: 'تعلّم من خلال تجارب حقيقية' },
+            { icon: '🏆', title: 'مسابقات ممتعة', desc: 'اختبر معلوماتك واربح نقاط' },
+            { icon: '🌱', title: 'حماية البيئة', desc: 'اكتشف كيف تحمي الكوكب' },
+          ].map((f, i) => (
+            <motion.div key={i}
+              whileHover={{ y: -5 }}
+              className="glass rounded-kid p-6 text-center"
+            >
+              <span className="text-4xl mb-3 block">{f.icon}</span>
+              <h3 className="text-white font-bold text-lg mb-1">{f.title}</h3>
+              <p className="text-white/70 text-sm">{f.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </main>
   );
 }
