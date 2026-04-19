@@ -19,18 +19,7 @@ export default function SponsorsFooter() {
           />
         </div>
 
-        {/* En bas à droite: Logos des codemandeurs (Placeholders for now) */}
-        <div className="flex items-center gap-2 md:gap-4">
-          <div className="bg-[#6B5B95] text-white text-[10px] md:text-xs font-bold py-1 px-2 md:py-2 md:px-4 rounded text-center whitespace-pre-line leading-tight">
-            {'Logo\ncodemandeur'}
-          </div>
-          <div className="bg-[#6B5B95] text-white text-[10px] md:text-xs font-bold py-1 px-2 md:py-2 md:px-4 rounded text-center whitespace-pre-line leading-tight">
-            {'Logo\ncodemandeur'}
-          </div>
-          <div className="bg-[#6B5B95] text-white text-[10px] md:text-xs font-bold py-1 px-2 md:py-2 md:px-4 rounded text-center whitespace-pre-line leading-tight">
-            {'Logo\ncodemandeur'}
-          </div>
-        </div>
+
       </div>
     </footer>
   );

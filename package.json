@@ -14,8 +14,10 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^3.0.3",
     "framer-motion": "^12.38.0",
+    "jsonwebtoken": "^9.0.3",
     "next": "14.2.35",
     "next-auth": "^4.24.14",
     "react": "^18",

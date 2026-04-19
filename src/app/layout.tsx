@@ -4,8 +4,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import SessionProvider from '@/components/SessionProvider';
-import SponsorsNav from '@/components/SponsorsNav';
-import SponsorsFooter from '@/components/SponsorsFooter';
+import MainLayoutWrapper from '@/components/MainLayoutWrapper';
 
 export const metadata: Metadata = {
   title: 'EcoScience — منصة العلوم البيئية',
@@ -22,11 +21,9 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body className="font-cairo antialiased">
         <SessionProvider>
-          <SponsorsNav />
-          <div className="pt-[60px] pb-[60px] min-h-screen">
+          <MainLayoutWrapper>
             {children}
-          </div>
-          <SponsorsFooter />
+          </MainLayoutWrapper>
         </SessionProvider>
       </body>
     </html>

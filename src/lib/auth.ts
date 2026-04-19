@@ -35,7 +35,6 @@ export const authOptions: NextAuthOptions = {
           throw new Error('لا يوجد حساب بهذا البريد الإلكتروني');
         }
 
-        // Comparer le mot de passe hashé
         const isPasswordValid = await bcrypt.compare(
           credentials.password,
           user.password
@@ -45,12 +44,12 @@ export const authOptions: NextAuthOptions = {
           throw new Error('كلمة المرور غير صحيحة');
         }
 
-        // Retourner les données utilisateur (sans le mot de passe)
         return {
           id: user.id,
-          name: user.name,
+          name: `${user.firstName} ${user.lastName}`,
           email: user.email,
         };
+
       },
     }),
   ],
