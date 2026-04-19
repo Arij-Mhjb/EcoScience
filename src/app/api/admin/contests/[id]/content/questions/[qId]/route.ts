@@ -22,7 +22,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string; qI
       },
     });
     return NextResponse.json({ question });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }

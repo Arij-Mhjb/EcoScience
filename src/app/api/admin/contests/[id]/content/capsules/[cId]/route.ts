@@ -21,7 +21,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string; cI
       },
     });
     return NextResponse.json({ capsule });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }

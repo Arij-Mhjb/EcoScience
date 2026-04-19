@@ -19,7 +19,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string; zo
       },
     });
     return NextResponse.json({ zone });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }

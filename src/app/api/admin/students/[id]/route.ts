@@ -48,7 +48,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     const { password: _, ...safeUser } = user;
     return NextResponse.json({ user: safeUser });
-  } catch (error) {
+  } catch {
     console.error('Update student error:', error);
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
@@ -62,7 +62,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     await prisma.participation.deleteMany({ where: { userId: params.id } });
     await prisma.user.delete({ where: { id: params.id } });
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }

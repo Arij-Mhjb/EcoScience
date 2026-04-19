@@ -14,6 +14,13 @@ import MatchingChallenge from "@/components/MatchingChallenge";
 import ContestResults from "@/components/ContestResults";
 import Turtle from "@/components/Turtle";
 
+interface QuizAnswer {
+  questionIndex: number;
+  selectedAnswer: number;
+  correct: boolean;
+  points: number;
+}
+
 type ContestStep =
   | "animation"
   | "flash"
@@ -76,7 +83,7 @@ export default function PlayPage() {
   const [challenge2Score, setChallenge2Score] = useState(0);
   const [challenge2Errors, setChallenge2Errors] = useState(0);
 
-  const [initialQuizAnswers, setInitialQuizAnswers] = useState<any[]>([]);
+  const [initialQuizAnswers, setInitialQuizAnswers] = useState<QuizAnswer[]>([]);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
@@ -107,8 +114,8 @@ export default function PlayPage() {
               const qAns = p.quizAnswers || [];
               if (qAns.length > 0 && qAns.length < 18) {
                  setInitialQuizAnswers(qAns);
-                 setQuizScore(qAns.reduce((acc: number, ans: any) => acc + ans.points, 0));
-                 setQuizErrors(qAns.reduce((acc: number, ans: any) => acc + (ans.correct ? 0 : 1), 0));
+                 setQuizScore(qAns.reduce((acc: number, ans: QuizAnswer) => acc + ans.points, 0));
+                 setQuizErrors(qAns.reduce((acc: number, ans: QuizAnswer) => acc + (ans.correct ? 0 : 1), 0));
                  setStep("quiz");
                  setTimerActive(true);
               }
@@ -122,7 +129,7 @@ export default function PlayPage() {
     }
   }, [status, contestId]);
 
-  const handleQuizProgress = useCallback((answers: any[], currentScore: number, currentErrors: number) => {
+  const handleQuizProgress = useCallback((answers: QuizAnswer[], currentScore: number, currentErrors: number) => {
     fetch(`/api/contest-progress`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

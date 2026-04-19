@@ -21,7 +21,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string; ch
       },
     });
     return NextResponse.json({ challenge });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }
