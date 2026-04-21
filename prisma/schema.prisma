@@ -1,0 +1,126 @@
+// Schéma Prisma pour EcoScience — Plateforme InNOScEnce
+// Provider: MongoDB Atlas
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Admin ──────────────────────────────────────────────────────
+model Admin {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String   // hashé bcrypt
+  name      String
+  createdAt DateTime @default(now())
+}
+
+// ─── Utilisateur (élève) ────────────────────────────────────────
+model User {
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  firstName      String
+  lastName       String
+  email          String          @unique
+  password       String          // hashé bcrypt
+  plainPassword  String          @default("") // mot de passe lisible (admin)
+  xp             Int             @default(0)
+  level          Int             @default(1)
+  participations Participation[]
+  createdAt      DateTime        @default(now())
+}
+
+// ─── Participation (pivot User ↔ Contest) ───────────────────────
+model Participation {
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId           String    @db.ObjectId
+  user             User      @relation(fields: [userId], references: [id])
+  contestId        String    @db.ObjectId
+  contest          Contest   @relation(fields: [contestId], references: [id])
+  score            Int       @default(0)
+  timeSpent        Int       @default(0)   // secondes
+  errors           Int       @default(0)
+  completedZones   String[]  @default([])
+  quizAnswers      Json      @default("{}")
+  challengeAnswers Json      @default("{}")
+  status           String    @default("not_started")
+  // "not_started" | "in_progress" | "completed"
+  startedAt        DateTime?
+  completedAt      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+// ─── Concours ───────────────────────────────────────────────────
+model Contest {
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  title          String          // arabe
+  description    String
+  image          String
+  icon           String          @default("🏆") // emoji
+  order          Int
+  isActive       Boolean         @default(false)
+  isHidden       Boolean         @default(false)
+  durationMin    Int             @default(120)   // durée en minutes
+  participations Participation[]
+  zones          Zone[]
+  capsules       Capsule[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+// ─── Zone (étape dans un concours) ──────────────────────────────
+model Zone {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  title       String            // arabe
+  description String
+  order       Int
+  icon        String            @default("📍")
+  contestId   String            @db.ObjectId
+  contest     Contest           @relation(fields: [contestId], references: [id])
+  questions   Question[]
+  challenges  VisualChallenge[]
+}
+
+// ─── Question (QCM) ─────────────────────────────────────────────
+model Question {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  text    String   // arabe
+  options String[]
+  answer  Int      // index bonne réponse (0-based)
+  points  Int      @default(3)
+  tip     String   // arabe
+  order   Int      @default(0)
+  zoneId  String   @db.ObjectId
+  zone    Zone     @relation(fields: [zoneId], references: [id])
+}
+
+// ─── Capsule vidéo ──────────────────────────────────────────────
+model Capsule {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String   // arabe
+  description String
+  videoUrl    String
+  duration    Int      // secondes
+  turtleMsg   String   // arabe
+  order       Int      @default(0)
+  contestId   String   @db.ObjectId
+  contest     Contest  @relation(fields: [contestId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+// ─── Défi visuel (drag & drop / matching) ───────────────────────
+model VisualChallenge {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String   // arabe
+  type      String   // "drag_drop" | "matching"
+  items     Json
+  points    Int      @default(5)
+  order     Int      @default(0)
+  zoneId    String   @db.ObjectId
+  zone      Zone     @relation(fields: [zoneId], references: [id])
+  createdAt DateTime @default(now())
+}

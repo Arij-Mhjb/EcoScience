@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7ed957;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#35741d;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg2)" rx="20"/>
+  <text x="200" y="120" text-anchor="middle" font-size="80">🌱</text>
+  <text x="200" y="180" text-anchor="middle" font-family="Arial" font-size="28" fill="white" font-weight="bold">التسميد</text>
+  <text x="200" y="220" text-anchor="middle" font-family="Arial" font-size="18" fill="rgba(255,255,255,0.7)">Compostage</text>
+  <circle cx="60" cy="60" r="25" fill="rgba(255,255,255,0.1)"/>
+  <circle cx="340" cy="240" r="35" fill="rgba(255,255,255,0.1)"/>
+</svg>

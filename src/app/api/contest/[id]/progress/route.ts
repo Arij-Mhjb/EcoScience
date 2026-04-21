@@ -1,0 +1,70 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import prisma from '@/lib/prisma';
+
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+
+    const userId = (session.user as { id: string }).id;
+    const contestId = params.id;
+    const { questionId, answer, timeSpent, completedZones } = await req.json();
+
+    let participation = await prisma.participation.findFirst({ where: { userId, contestId } });
+
+    let currentAnswers: Record<string, any> = {};
+    let currentZones: string[] = [];
+
+    if (participation) {
+      if (participation.quizAnswers && typeof participation.quizAnswers === 'object' && !Array.isArray(participation.quizAnswers)) {
+        currentAnswers = { ...participation.quizAnswers as Record<string, any> };
+      } else if (Array.isArray(participation.quizAnswers)) {
+         // Migration from old array format
+         (participation.quizAnswers as any[]).forEach((ans: any) => {
+            if (ans && ans.questionIndex !== undefined && ans.selectedAnswer !== undefined) {
+               currentAnswers[String(ans.questionIndex)] = ans.selectedAnswer;
+            }
+         });
+      }
+      currentZones = participation.completedZones || [];
+    }
+
+    if (questionId !== undefined && answer !== undefined) {
+      currentAnswers[String(questionId)] = answer;
+    }
+
+    if (completedZones && Array.isArray(completedZones)) {
+      currentZones = Array.from(new Set([...currentZones, ...completedZones]));
+    }
+
+    if (participation) {
+      participation = await prisma.participation.update({
+        where: { id: participation.id },
+        data: {
+          quizAnswers: currentAnswers,
+          completedZones: currentZones,
+          timeSpent: timeSpent !== undefined ? timeSpent : participation.timeSpent,
+          status: 'in_progress'
+        },
+      });
+    } else {
+      participation = await prisma.participation.create({
+        data: {
+          userId,
+          contestId,
+          quizAnswers: currentAnswers,
+          completedZones: currentZones,
+          timeSpent: timeSpent || 0,
+          status: 'in_progress'
+        },
+      });
+    }
+
+    return NextResponse.json({ success: true, progress: participation });
+  } catch (error) {
+    console.error('[PATCH /api/contest/[id]/progress]', error);
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+  }
+}
