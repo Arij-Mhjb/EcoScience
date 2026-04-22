@@ -310,9 +310,9 @@ function SequenceView({
   onSkip: () => void;
 }) {
   const { t, locale } = useLanguage();
+  const isAr = locale === 'ar';
   
   const renderContent = () => {
-    const isAr = locale === 'ar';
     switch (type) {
       case 0:
         return (
