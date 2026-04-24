@@ -22,6 +22,7 @@ interface ZoneData {
   description: string;
   contestId: string;
   questions: Question[];
+  images?: string[];
 }
 
 export default function ZonePage() {
@@ -52,7 +53,47 @@ export default function ZonePage() {
     if (status === 'authenticated' && zoneId) fetchZone();
   }, [status, zoneId]);
 
-  const getFallback = (id: string): ZoneData => {
+  const getFallback = (id: string, realContestId?: string): ZoneData => {
+    // Cas spécial pour la zone spécifique demandée par l'utilisateur
+    if (id === '69e51151482488070228f2ba') {
+      return {
+        id,
+        contestId: realContestId || '69e51150482488070228f2b8',
+        questions: [],
+        title: locale === 'ar' ? '⚠️ تحذير بيئي' : '⚠️ Alerte Environnement',
+        description: locale === 'ar' 
+          ? 'هذه سلحفاةٌ تأذّت بسبب الأكياس البلاستيكية التي رُميت في غير مكانها الصحيح، لذلك فإنّ تنظيم النفايات ورميها في الأماكن المخصّصة أمرٌ مهمّ جدًّا.'
+          : 'Voici une tortue qui a été blessée par des sacs en plastique jetés au mauvais endroit. C\'est pourquoi le tri et l\'élimination des déchets dans les zones dédiées sont extrêmement importants.',
+        images: ['/images/turtle-hurt-1.jpg', '/images/turtle-hurt-2.jpg']
+      };
+    }
+
+    if (id === '69e51151482488070228f2bf') {
+      return {
+        id,
+        contestId: realContestId || '69e51150482488070228f2b8',
+        questions: [],
+        title: locale === 'ar' ? '🐢 حقيقة مذهلة' : '🐢 Fait Incroyable',
+        description: locale === 'ar'
+          ? 'هل تعلم أنّ الكيس البلاستيكي قد يستغرق مئات السنين ليتحلّل في الطبيعة، وخلال ذلك يمكن أن يؤذي الحيوانات مثل السلاحف التي تظنّه طعامًا؟'
+          : 'Savais-tu qu\'un sac plastique peut mettre des centaines d\'années à se décomposer dans la nature, et pendant ce temps, il peut blesser des animaux comme les tortues qui le confondent avec de la nourriture ?',
+        images: ['/images/turtle-fact-material.png']
+      };
+    }
+
+    if (id === '69e51151482488070228f2c4') {
+      return {
+        id,
+        contestId: realContestId || '69e51150482488070228f2b8',
+        questions: [],
+        title: locale === 'ar' ? '🌍 إنقاذ الكوكب' : '🌍 Sauver la planète',
+        description: locale === 'ar'
+          ? 'اكتشف كيف يمكن لتصرّفات بسيطة مثل رمي النفايات في مكانها الصحيح وإعادة التدوير أن تُسهم في حماية كوكبنا'
+          : 'Découvre comment des gestes simples, comme jeter les déchets au bon endroit et recycler, peuvent contribuer à protéger notre planète.',
+        images: ['/images/saving-planet-1.png', '/images/saving-planet-2.png', '/images/saving-planet-3.png']
+      };
+    }
+
     const factsListAr = [
       {
         title: '🟢 تنظيم النفايات',
@@ -88,7 +129,8 @@ export default function ZonePage() {
     return { id, contestId: '', questions: [], ...factsList[index] };
   };
 
-  const displayZone = zone || getFallback(zoneId);
+  const isSpecialZone = zoneId === '69e51151482488070228f2ba' || zoneId === '69e51151482488070228f2bf' || zoneId === '69e51151482488070228f2c4';
+  const displayZone = (isSpecialZone ? getFallback(zoneId, zone?.contestId) : zone) || getFallback(zoneId);
 
   const saveProgress = useCallback(async (earnedXP: number, contestId?: string) => {
     try {
@@ -141,40 +183,57 @@ export default function ZonePage() {
                 <Turtle mood="happy" size="lg" message={t('ready_discover')} />
               </div>
               
-              <div className="bg-white rounded-3xl shadow-xl p-6 md:p-12 border border-primary-100 max-w-3xl mx-auto">
-                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-10 border-b border-primary-50 pb-6">
-                  <motion.div 
-                    animate={{ rotate: [0, -5, 5, 0] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                    className="bg-gradient-to-r from-success to-success-400 text-white px-6 py-2 rounded-full text-xl font-black shadow-lg"
-                  >
-                    {t('did_you_know')}
-                  </motion.div>
-                  <h1 className="text-4xl font-black text-primary-800">
-                    {displayZone.title}
-                  </h1>
-                </div>
-                
-                <div className="space-y-6 mb-10 text-right">
-                  {displayZone.description.split('\n').filter(l => l.trim()).map((line, i) => (
+                <div className="bg-white rounded-3xl shadow-xl p-6 md:p-12 border border-primary-100 max-w-3xl mx-auto">
+                  <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-10 border-b border-primary-50 pb-6">
                     <motion.div 
-                      key={i}
-                      initial={{ opacity: 0, x: locale === 'ar' ? 50 : -50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + i * 0.2 }}
-                      whileHover={{ scale: 1.02, x: locale === 'ar' ? -5 : 5 }}
-                      className={`flex items-start gap-5 p-6 rounded-2xl border border-primary-100 shadow-sm hover:shadow-md transition-all
-                                ${locale === 'ar' ? 'bg-gradient-to-l from-white to-primary-50/30' : 'bg-gradient-to-r from-white to-primary-50/30 flex-row-reverse text-left'}`}
+                      animate={{ rotate: [0, -5, 5, 0] }}
+                      transition={{ repeat: Infinity, duration: 2 }}
+                      className="bg-gradient-to-r from-success to-success-400 text-white px-6 py-2 rounded-full text-xl font-black shadow-lg"
                     >
-                      <p className={`text-2xl text-gray-800 font-bold flex-1 leading-relaxed ${locale === 'ar' ? 'text-right' : 'text-left'}`}>
-                        {line}
-                      </p>
-                      <span className="text-4xl mt-1 filter drop-shadow-sm">
-                        {factIcons[i % factIcons.length]}
-                      </span>
+                      {t('did_you_know')}
                     </motion.div>
-                  ))}
-                </div>
+                    <h1 className="text-4xl font-black text-primary-800">
+                      {displayZone.title}
+                    </h1>
+                  </div>
+
+                  <div className="space-y-6 mb-10 text-right">
+                    {displayZone.description.split('\n').filter(l => l.trim()).map((line, i) => (
+                      <motion.div 
+                        key={i}
+                        initial={{ opacity: 0, x: locale === 'ar' ? 50 : -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 + i * 0.2 }}
+                        whileHover={{ scale: 1.02, x: locale === 'ar' ? -5 : 5 }}
+                        className={`flex items-start gap-5 p-6 rounded-2xl border border-primary-100 shadow-sm hover:shadow-md transition-all
+                                  ${locale === 'ar' ? 'bg-gradient-to-l from-white to-primary-50/30' : 'bg-gradient-to-r from-white to-primary-50/30 flex-row-reverse text-left'}`}
+                      >
+                        <p className={`text-2xl text-gray-800 font-bold flex-1 leading-relaxed ${locale === 'ar' ? 'text-right' : 'text-left'}`}>
+                          {line}
+                        </p>
+                        <span className="text-4xl mt-1 filter drop-shadow-sm">
+                          {factIcons[i % factIcons.length]}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Images après la phrase */}
+                  {displayZone.images && (
+                    <div className="flex flex-wrap justify-center gap-6 mb-10">
+                      {displayZone.images.map((src, i) => (
+                        <motion.div 
+                          key={i}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.6 + i * 0.2 }}
+                          className="rounded-3xl overflow-hidden border-8 border-white shadow-2xl max-w-md w-full"
+                        >
+                          <img src={src} alt="Illustration" className="w-full h-auto object-contain" />
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
                 
                 <div className="flex justify-center mt-12">
                   <button 

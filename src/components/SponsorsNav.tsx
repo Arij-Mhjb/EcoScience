@@ -16,7 +16,7 @@ export default function SponsorsNav() {
         <div className="flex items-center gap-4">
           <Image
             src="/images/association-logo.png"
-            alt="Association"
+            alt="InNOScEnce"
             width={100}
             height={50}
             className="object-contain max-h-[50px] w-auto"
