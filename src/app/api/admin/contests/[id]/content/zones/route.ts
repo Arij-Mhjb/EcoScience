@@ -21,11 +21,19 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
 
   try {
-    const { title, description, icon, order } = await req.json();
+    const { title, titleFr, description, descriptionFr, icon, order } = await req.json();
     if (!title) return NextResponse.json({ error: 'Titre requis' }, { status: 400 });
 
     const zone = await prisma.zone.create({
-      data: { title, description: description || '', icon: icon || '📍', order: order || 0, contestId: params.id },
+      data: { 
+        title, 
+        titleFr, 
+        description: description || '', 
+        descriptionFr, 
+        icon: icon || '📍', 
+        order: order || 0, 
+        contestId: params.id 
+      },
     });
 
     return NextResponse.json({ zone }, { status: 201 });

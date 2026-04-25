@@ -11,15 +11,20 @@ import { useLanguage } from '@/context/LanguageContext';
 interface Question {
   id: string;
   text: string;
+  textFr?: string;
   options: string[];
+  optionsFr?: string[];
   answer: number;
   tip: string;
+  tipFr?: string;
 }
 
 interface ZoneData {
   id: string;
   title: string;
+  titleFr?: string;
   description: string;
+  descriptionFr?: string;
   contestId: string;
   questions: Question[];
   images?: string[];
@@ -54,43 +59,39 @@ export default function ZonePage() {
   }, [status, zoneId]);
 
   const getFallback = (id: string, realContestId?: string): ZoneData => {
-    // Cas spécial pour la zone spécifique demandée par l'utilisateur
-    if (id === '69e51151482488070228f2ba') {
-      return {
-        id,
-        contestId: realContestId || '69e51150482488070228f2b8',
-        questions: [],
-        title: locale === 'ar' ? '⚠️ تحذير بيئي' : '⚠️ Alerte Environnement',
+    // Traductions système pour les zones par défaut (si non définies en BDD)
+    const SYSTEM_ZONES: Record<string, { title: string; description: string }> = {
+      '69e51151482488070228f2ba': { 
+        title: locale === 'ar' ? 'تصنيف النفايات' : 'Tri des déchets', 
         description: locale === 'ar' 
           ? 'هذه سلحفاةٌ تأذّت بسبب الأكياس البلاستيكية التي رُميت في غير مكانها الصحيح، لذلك فإنّ تنظيم النفايات ورميها في الأماكن المخصّصة أمرٌ مهمّ جدًّا.'
-          : 'Voici une tortue qui a été blessée par des sacs en plastique jetés au mauvais endroit. C\'est pourquoi le tri et l\'élimination des déchets dans les zones dédiées sont extrêmement importants.',
-        images: ['/images/turtle-hurt-1.jpg', '/images/turtle-hurt-2.jpg']
-      };
-    }
-
-    if (id === '69e51151482488070228f2bf') {
-      return {
-        id,
-        contestId: realContestId || '69e51150482488070228f2b8',
-        questions: [],
-        title: locale === 'ar' ? '🐢 حقيقة مذهلة' : '🐢 Fait Incroyable',
+          : 'Voici une tortue qui a été blessée par des sacs en plastique jetés au mauvais endroit. C\'est pourquoi le tri et l\'élimination des déchets dans les zones dédiées sont extrêmement importants.'
+      },
+      '69e51151482488070228f2bf': { 
+        title: locale === 'ar' ? 'المواد' : 'Les Matériaux', 
         description: locale === 'ar'
           ? 'هل تعلم أنّ الكيس البلاستيكي قد يستغرق مئات السنين ليتحلّل في الطبيعة، وخلال ذلك يمكن أن يؤذي الحيوانات مثل السلاحف التي تظنّه طعامًا؟'
-          : 'Savais-tu qu\'un sac plastique peut mettre des centaines d\'années à se décomposer dans la nature, et pendant ce temps, il peut blesser des animaux comme les tortues qui le confondent avec de la nourriture ?',
-        images: ['/images/turtle-fact-material.png']
-      };
-    }
+          : 'Savais-tu qu\'un sac plastique peut mettre des centaines d\'années à se décomposer dans la nature, et pendant ce temps, il peut blesser des animaux comme les tortues qui le confondent avec de la nourriture ?'
+      },
+      '69e51151482488070228f2c4': { 
+        title: locale === 'ar' ? 'إنقاذ الكوكب' : 'Sauver la planète', 
+        description: locale === 'ar'
+          ? 'اكتشف كيف يمكن لتصرّفات بسيطة مثل رمي النفايات في مكانها الصحيح وإعادة التدوير أن تُسهم في حماية كوكبنا'
+          : 'Découvre comment des gestes simples, comme jeter les déchets au bon endroit et recycler, peuvent contribuer à protéger notre planète.'
+      },
+    };
 
-    if (id === '69e51151482488070228f2c4') {
+    if (SYSTEM_ZONES[id]) {
       return {
         id,
         contestId: realContestId || '69e51150482488070228f2b8',
         questions: [],
-        title: locale === 'ar' ? '🌍 إنقاذ الكوكب' : '🌍 Sauver la planète',
-        description: locale === 'ar'
-          ? 'اكتشف كيف يمكن لتصرّفات بسيطة مثل رمي النفايات في مكانها الصحيح وإعادة التدوير أن تُسهم في حماية كوكبنا'
-          : 'Découvre comment des gestes simples, comme jeter les déchets au bon endroit et recycler, peuvent contribuer à protéger notre planète.',
-        images: ['/images/saving-planet-1.png', '/images/saving-planet-2.png', '/images/saving-planet-3.png']
+        title: SYSTEM_ZONES[id].title,
+        description: SYSTEM_ZONES[id].description,
+        images: id === '69e51151482488070228f2ba' ? ['/images/turtle-hurt-1.jpg', '/images/turtle-hurt-2.jpg'] 
+               : id === '69e51151482488070228f2bf' ? ['/images/turtle-fact-material.png']
+               : id === '69e51151482488070228f2c4' ? ['/images/saving-planet-1.png', '/images/saving-planet-2.png', '/images/saving-planet-3.png']
+               : []
       };
     }
 
@@ -130,7 +131,14 @@ export default function ZonePage() {
   };
 
   const isSpecialZone = zoneId === '69e51151482488070228f2ba' || zoneId === '69e51151482488070228f2bf' || zoneId === '69e51151482488070228f2c4';
-  const displayZone = (isSpecialZone ? getFallback(zoneId, zone?.contestId) : zone) || getFallback(zoneId);
+  
+  // Appliquer les traductions système au besoin
+  let displayZone = (isSpecialZone ? getFallback(zoneId, zone?.contestId) : zone) || getFallback(zoneId);
+  
+  if (!isAr && displayZone && !displayZone.titleFr) {
+    const fallback = getFallback(displayZone.id, displayZone.contestId);
+    displayZone = { ...displayZone, titleFr: fallback.title, descriptionFr: fallback.description };
+  }
 
   const saveProgress = useCallback(async (earnedXP: number, contestId?: string) => {
     try {
@@ -193,12 +201,12 @@ export default function ZonePage() {
                       {t('did_you_know')}
                     </motion.div>
                     <h1 className="text-4xl font-black text-primary-800">
-                      {displayZone.title}
+                      {(locale === 'fr' && displayZone.titleFr) ? displayZone.titleFr : displayZone.title}
                     </h1>
                   </div>
 
                   <div className="space-y-6 mb-10 text-right">
-                    {displayZone.description.split('\n').filter(l => l.trim()).map((line, i) => (
+                    {((locale === 'fr' && displayZone.descriptionFr) ? displayZone.descriptionFr : displayZone.description).split('\n').filter(l => l.trim()).map((line, i) => (
                       <motion.div 
                         key={i}
                         initial={{ opacity: 0, x: locale === 'ar' ? 50 : -50 }}

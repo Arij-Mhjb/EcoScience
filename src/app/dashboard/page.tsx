@@ -14,7 +14,9 @@ import { useLanguage } from '@/context/LanguageContext';
 interface Contest {
   id: string;
   title: string;
+  titleFr?: string;
   description: string;
+  descriptionFr?: string;
   image: string;
   order: number;
 }
@@ -29,6 +31,7 @@ export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { t, locale } = useLanguage();
+  const isAr = locale === 'ar';
   const [contests, setContests] = useState<Contest[]>([]);
   const [progress, setProgress] = useState<UserProgress>({ xp: 0, level: 1, completedZones: [] });
   const [loading, setLoading] = useState(true);
@@ -75,22 +78,43 @@ export default function DashboardPage() {
     );
   }
 
+  // Traductions système pour les concours par défaut (si non définies en BDD)
+  const SYSTEM_CONTESTS: Record<string, { title: string; description: string }> = {
+    '69e51150482488070228f2b8': {
+      title: '♻️ Recyclage des matériaux',
+      description: 'Apprends à trier les déchets et recycler les matériaux pour protéger l\'environnement.'
+    },
+    '69e51153482488070228f2cd': {
+      title: '🌱 Compostage et gestion bio',
+      description: 'Découvre comment les déchets organiques se transforment en compost naturel utile.'
+    },
+    '69e51153482488070228f2ce': {
+      title: '🌍 Sauver la planète',
+      description: 'Une aventure complète pour protéger notre planète de la pollution et des déchets.'
+    }
+  };
+
   // Données fallback si l'API n'est pas encore connectée
-  const displayContests = contests.length > 0 ? contests : [
+  const displayContests = contests.length > 0 ? contests.map(c => {
+    if (!isAr && !c.titleFr && SYSTEM_CONTESTS[c.id]) {
+      return { ...c, titleFr: SYSTEM_CONTESTS[c.id].title, descriptionFr: SYSTEM_CONTESTS[c.id].description };
+    }
+    return c;
+  }) : [
     { 
-      id: '1', 
+      id: '69e51150482488070228f2b8', 
       title: locale === 'ar' ? '♻️ إعادة تدوير المواد' : '♻️ Recyclage des matériaux', 
       description: locale === 'ar' ? 'تعلّم كيفية فرز النفايات وإعادة تدوير المواد لحماية البيئة' : 'Apprends à trier les déchets et recycler les matériaux pour protéger l\'environnement', 
       image: '/images/contest-recycling.svg', order: 1 
     },
     { 
-      id: '2', 
+      id: '69e51153482488070228f2cd', 
       title: locale === 'ar' ? '🌱 التسميد وتدبير النفايات العضوية' : '🌱 Compostage et gestion bio', 
       description: locale === 'ar' ? 'اكتشف كيف تتحول النفايات العضوية إلى سماد طبيعي مفيد' : 'Découvre comment les déchets organiques se transforment en compost naturel utile', 
       image: '/images/contest-compost.svg', order: 2 
     },
     { 
-      id: '3', 
+      id: '69e51153482488070228f2ce', 
       title: locale === 'ar' ? '🌍 إنقاذ الكوكب' : '🌍 Sauver la planète', 
       description: locale === 'ar' ? 'مغامرة شاملة لحماية كوكبنا من التلوث والنفايات' : 'Une aventure complète pour protéger notre planète de la pollution et des déchets', 
       image: '/images/contest-planet.svg', order: 3 
@@ -142,11 +166,11 @@ export default function DashboardPage() {
             <ContestCard
               key={contest.id}
               id={contest.id}
-              title={contest.title}
-              description={contest.description}
+              title={(!isAr && contest.titleFr) ? contest.titleFr : contest.title}
+              description={(!isAr && contest.descriptionFr) ? contest.descriptionFr : contest.description}
               image={contest.image}
               order={contest.order}
-              isActive={contest.order === 1}
+              isActive={contest.order === 1 || contest.isActive}
               onClick={() => router.push(`/contest/${contest.id}`)}
             />
           ))}

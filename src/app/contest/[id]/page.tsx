@@ -13,14 +13,18 @@ import { useLanguage } from "@/context/LanguageContext";
 interface Zone {
   id: string;
   title: string;
+  titleFr?: string;
   description: string;
+  descriptionFr?: string;
   order: number;
 }
 
 interface ContestData {
   id: string;
   title: string;
+  titleFr?: string;
   description: string;
+  descriptionFr?: string;
   zones: Zone[];
 }
 
@@ -66,15 +70,28 @@ export default function ContestPage() {
     if (status === "authenticated" && contestId) fetchData();
   }, [status, contestId]);
 
+  // Traductions système pour les zones par défaut (si non définies en BDD)
+  const SYSTEM_ZONES: Record<string, { title: string; description: string }> = {
+    '69e51151482488070228f2ba': { title: 'Tri des déchets', description: 'Apprends à trier tes déchets' },
+    '69e51151482488070228f2bf': { title: 'Les Matériaux', description: 'Découvre les différents types de matériaux' },
+    '69e51151482488070228f2c4': { title: 'Sauver la Planète', description: 'Aide à protéger l\'environnement' },
+  };
+
+  const SYSTEM_CONTESTS: Record<string, { title: string; description: string }> = {
+    '69e51150482488070228f2b8': { title: '♻️ Recyclage des matériaux', description: 'Pars avec la tortue pour sauver la planète du plastique !' },
+    '69e51153482488070228f2cd': { title: '🌱 Compostage et gestion bio', description: 'Découvre comment les déchets organiques se transforment en compost naturel utile.' },
+    '69e51153482488070228f2ce': { title: '🌍 Sauver la planète', description: 'Une aventure complète pour protéger notre planète de la pollution et des déchets.' },
+  };
+
   // Données fallback
   const fallbackContestAr: ContestData = {
     id: contestId,
     title: "♻️ إعادة تدوير المواد",
     description: "انطلق مع السلحفاة لإنقاذ الكوكب من البلاستيك!",
     zones: [
-      { id: "z1", title: "تصنيف النفايات", description: "تعلّم كيفية فرز النفايات", order: 1 },
-      { id: "z2", title: "المواد", description: "اكتشف أنواع المواد المختلفة", order: 2 },
-      { id: "z3", title: "إنقاذ الكوكب", description: "ساعد في حماية البيئة", order: 3 },
+      { id: "69e51151482488070228f2ba", title: "تصنيف النفايات", description: "تعلّم كيفية فرز النفايات", order: 1 },
+      { id: "69e51151482488070228f2bf", title: "المواد", description: "اكتشف أنواع المواد المختلفة", order: 2 },
+      { id: "69e51151482488070228f2c4", title: "إنقاذ الكوكب", description: "ساعد في حماية البيئة", order: 3 },
     ],
   };
 
@@ -83,13 +100,30 @@ export default function ContestPage() {
     title: "♻️ Recyclage des matériaux",
     description: "Pars avec la tortue pour sauver la planète du plastique !",
     zones: [
-      { id: "z1", title: "Tri des déchets", description: "Apprends à trier tes déchets", order: 1 },
-      { id: "z2", title: "Les Matériaux", description: "Découvre les différents types de matériaux", order: 2 },
-      { id: "z3", title: "Sauver la Planète", description: "Aide à protéger l'environnement", order: 3 },
+      { id: "69e51151482488070228f2ba", title: "Tri des déchets", description: "Apprends à trier tes déchets", order: 1 },
+      { id: "69e51151482488070228f2bf", title: "Les Matériaux", description: "Découvre les différents types de matériaux", order: 2 },
+      { id: "69e51151482488070228f2c4", title: "Sauver la Planète", description: "Aide à protéger l'environnement", order: 3 },
     ],
   };
 
-  const displayContest = contest || (locale === 'ar' ? fallbackContestAr : fallbackContestFr);
+  let displayContest = contest || (locale === 'ar' ? fallbackContestAr : fallbackContestFr);
+
+  // Appliquer les traductions système si nécessaire
+  if (!isAr && displayContest) {
+    if (!displayContest.titleFr && SYSTEM_CONTESTS[displayContest.id]) {
+      displayContest = { 
+        ...displayContest, 
+        titleFr: SYSTEM_CONTESTS[displayContest.id].title, 
+        descriptionFr: SYSTEM_CONTESTS[displayContest.id].description 
+      };
+    }
+    displayContest.zones = displayContest.zones.map(z => {
+      if (!z.titleFr && SYSTEM_ZONES[z.id]) {
+        return { ...z, titleFr: SYSTEM_ZONES[z.id].title, descriptionFr: SYSTEM_ZONES[z.id].description };
+      }
+      return z;
+    });
+  }
 
   if (loading) {
     return (
@@ -151,10 +185,10 @@ export default function ContestPage() {
           className="text-center mb-4"
         >
           <h1 className="text-3xl md:text-4xl font-black text-white mb-3 drop-shadow-lg">
-            {displayContest.title}
+            {(!isAr && displayContest.titleFr) ? displayContest.titleFr : displayContest.title}
           </h1>
           <p className="text-ocean-light text-lg">
-            {displayContest.description}
+            {(!isAr && displayContest.descriptionFr) ? displayContest.descriptionFr : displayContest.description}
           </p>
         </motion.div>
 

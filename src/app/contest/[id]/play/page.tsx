@@ -56,6 +56,7 @@ export default function PlayPage() {
   const router = useRouter();
   const params = useParams();
   const { t, locale } = useLanguage();
+  const isAr = locale === 'ar';
   const contestId = params.id as string;
 
   const [step, setStep] = useState<ContestStep>("animation");

@@ -43,6 +43,7 @@ export default function MatchingChallenge({
   onComplete,
 }: MatchingChallengeProps) {
   const { t, locale } = useLanguage();
+  const isAr = locale === 'ar';
   const [selectedLeft, setSelectedLeft] = useState<LeftId | null>(null);
   const [pairs, setPairs] = useState<Partial<Record<LeftId, RightId>>>({});
   const [verified, setVerified] = useState(false);

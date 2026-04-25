@@ -20,11 +20,22 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
 
   try {
-    const { title, description, videoUrl, duration, turtleMsg, order } = await req.json();
+    const { title, titleFr, description, descriptionFr, videoUrl, duration, turtleMsg, turtleMsgFr, order } = await req.json();
     if (!title || !videoUrl) return NextResponse.json({ error: 'Titre et URL vidéo requis' }, { status: 400 });
 
     const capsule = await prisma.capsule.create({
-      data: { title, description: description || '', videoUrl, duration: duration || 0, turtleMsg: turtleMsg || '', order: order || 0, contestId: params.id },
+      data: { 
+        title, 
+        titleFr, 
+        description: description || '', 
+        descriptionFr, 
+        videoUrl, 
+        duration: duration || 0, 
+        turtleMsg: turtleMsg || '', 
+        turtleMsgFr, 
+        order: order || 0, 
+        contestId: params.id 
+      },
     });
 
     return NextResponse.json({ capsule }, { status: 201 });

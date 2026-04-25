@@ -11,14 +11,14 @@ export default function NewContestPage(){
   const[createdId,setCreatedId]=useState<string|null>(null);
 
   // Données accumulées
-  const[info,setInfo]=useState({title:'',description:'',image:'',icon:'🏆',order:99,durationMin:120});
-  const[zones,setZones]=useState([{title:'',description:'',icon:'📍',order:1}]);
-  const[capsule,setCapsule]=useState({title:'',description:'',videoUrl:'',duration:180,turtleMsg:'',enabled:false});
-  const[questions,setQuestions]=useState([{text:'',options:['','','',''],answer:0,points:3,tip:'',zoneIndex:0}]);
+  const[info,setInfo]=useState({title:'',titleFr:'',description:'',descriptionFr:'',image:'',icon:'🏆',order:99,durationMin:120});
+  const[zones,setZones]=useState([{title:'',titleFr:'',description:'',descriptionFr:'',icon:'📍',order:1}]);
+  const[capsule,setCapsule]=useState({title:'',titleFr:'',description:'',descriptionFr:'',videoUrl:'',duration:180,turtleMsg:'',turtleMsgFr:'',enabled:false});
+  const[questions,setQuestions]=useState([{text:'',textFr:'',options:['','','',''],optionsFr:['','','',''],answer:0,points:3,tip:'',tipFr:'',zoneIndex:0}]);
   const[challenges,setChallenges]=useState<any[]>([]);
 
-  const addZone=()=>setZones([...zones,{title:'',description:'',icon:'📍',order:zones.length+1}]);
-  const addQuestion=()=>setQuestions([...questions,{text:'',options:['','','',''],answer:0,points:3,tip:'',zoneIndex:0}]);
+  const addZone=()=>setZones([...zones,{title:'',titleFr:'',description:'',descriptionFr:'',icon:'📍',order:zones.length+1}]);
+  const addQuestion=()=>setQuestions([...questions,{text:'',textFr:'',options:['','','',''],optionsFr:['','','',''],answer:0,points:3,tip:'',tipFr:'',zoneIndex:0}]);
 
   const handleCreate=async()=>{
     setSaving(true);
@@ -42,7 +42,7 @@ export default function NewContestPage(){
       await Promise.all(questions.filter(q=>q.text).map(q=>{
         const zone=createdZones[q.zoneIndex]||createdZones[0];
         if(!zone)return Promise.resolve();
-        return fetch(`/api/admin/contests/${cid}/content/questions`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...q,options:q.options.filter(o=>o.trim()),zoneId:zone.id})});
+        return fetch(`/api/admin/contests/${cid}/content/questions`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...q,options:q.options.filter(o=>o.trim()),optionsFr:q.optionsFr.filter(o=>o.trim()),zoneId:zone.id})});
       }));
 
       setCreatedId(cid);
@@ -88,7 +88,9 @@ export default function NewContestPage(){
           <div>
             <h2 style={{fontSize:16,fontWeight:700,color:'#fff',marginBottom:20}}>📋 Informations générales</h2>
             <div className="form-group"><label className="form-label">Titre du concours (arabe)</label><input className="admin-input" value={info.title} onChange={e=>setInfo({...info,title:e.target.value})} placeholder="عنوان المسابقة" dir="rtl"/></div>
+            <div className="form-group"><label className="form-label">Titre du concours (français)</label><input className="admin-input" value={info.titleFr} onChange={e=>setInfo({...info,titleFr:e.target.value})} placeholder="Titre du concours"/></div>
             <div className="form-group"><label className="form-label">Description (arabe)</label><textarea className="admin-textarea" value={info.description} onChange={e=>setInfo({...info,description:e.target.value})} placeholder="وصف المسابقة..." dir="rtl"/></div>
+            <div className="form-group"><label className="form-label">Description (français)</label><textarea className="admin-textarea" value={info.descriptionFr} onChange={e=>setInfo({...info,descriptionFr:e.target.value})} placeholder="Description du concours..."/></div>
             <div className="form-row">
               <div className="form-group"><label className="form-label">Image (URL)</label><input className="admin-input" value={info.image} onChange={e=>setInfo({...info,image:e.target.value})} placeholder="/images/contest.svg"/></div>
               <div className="form-group"><label className="form-label">Icône (emoji)</label><input className="admin-input" value={info.icon} onChange={e=>setInfo({...info,icon:e.target.value})} style={{textAlign:'center',fontSize:24}}/></div>
@@ -113,9 +115,13 @@ export default function NewContestPage(){
                 </div>
                 <div className="form-row">
                   <div className="form-group"><label className="form-label">Titre (arabe)</label><input className="admin-input" value={z.title} onChange={e=>{const nz=[...zones];nz[i]={...nz[i],title:e.target.value};setZones(nz);}} dir="rtl"/></div>
+                  <div className="form-group"><label className="form-label">Titre (français)</label><input className="admin-input" value={z.titleFr} onChange={e=>{const nz=[...zones];nz[i]={...nz[i],titleFr:e.target.value};setZones(nz);}}/></div>
                   <div className="form-group"><label className="form-label">Icône</label><input className="admin-input" value={z.icon} onChange={e=>{const nz=[...zones];nz[i]={...nz[i],icon:e.target.value};setZones(nz);}} style={{textAlign:'center',fontSize:20}}/></div>
                 </div>
-                <div className="form-group"><label className="form-label">Description</label><input className="admin-input" value={z.description} onChange={e=>{const nz=[...zones];nz[i]={...nz[i],description:e.target.value};setZones(nz);}}/></div>
+                <div className="form-row">
+                  <div className="form-group"><label className="form-label">Description (arabe)</label><input className="admin-input" value={z.description} onChange={e=>{const nz=[...zones];nz[i]={...nz[i],description:e.target.value};setZones(nz);}} dir="rtl"/></div>
+                  <div className="form-group"><label className="form-label">Description (français)</label><input className="admin-input" value={z.descriptionFr} onChange={e=>{const nz=[...zones];nz[i]={...nz[i],descriptionFr:e.target.value};setZones(nz);}}/></div>
+                </div>
               </div>
             ))}
             <button className="btn-admin-secondary" onClick={addZone} style={{width:'100%',justifyContent:'center',borderStyle:'dashed'}}>➕ Ajouter une zone</button>
@@ -134,11 +140,13 @@ export default function NewContestPage(){
             {capsule.enabled&&(
               <div>
                 <div className="form-group"><label className="form-label">Titre (arabe)</label><input className="admin-input" value={capsule.title} onChange={e=>setCapsule({...capsule,title:e.target.value})} dir="rtl"/></div>
+                <div className="form-group"><label className="form-label">Titre (français)</label><input className="admin-input" value={capsule.titleFr} onChange={e=>setCapsule({...capsule,titleFr:e.target.value})}/></div>
                 <div className="form-group"><label className="form-label">URL Vidéo</label><input className="admin-input" value={capsule.videoUrl} onChange={e=>setCapsule({...capsule,videoUrl:e.target.value})} placeholder="https://www.youtube.com/embed/..."/></div>
                 <div className="form-row">
                   <div className="form-group"><label className="form-label">Durée (s)</label><input className="admin-input" type="number" value={capsule.duration} onChange={e=>setCapsule({...capsule,duration:+e.target.value})}/></div>
                 </div>
                 <div className="form-group"><label className="form-label">Message tortue (arabe)</label><textarea className="admin-textarea" value={capsule.turtleMsg} onChange={e=>setCapsule({...capsule,turtleMsg:e.target.value})} dir="rtl"/></div>
+                <div className="form-group"><label className="form-label">Message tortue (français)</label><textarea className="admin-textarea" value={capsule.turtleMsgFr} onChange={e=>setCapsule({...capsule,turtleMsgFr:e.target.value})}/></div>
               </div>
             )}
           </div>
@@ -156,12 +164,18 @@ export default function NewContestPage(){
                   {questions.length>1&&<button className="btn-admin-danger btn-admin-sm" onClick={()=>setQuestions(questions.filter((_,j)=>j!==qi))}>✕</button>}
                 </div>
                 <div className="form-group"><input className="admin-input" value={q.text} onChange={e=>{const nq=[...questions];nq[qi]={...nq[qi],text:e.target.value};setQuestions(nq);}} placeholder="السؤال بالعربية..." dir="rtl"/></div>
+                <div className="form-group"><input className="admin-input" value={q.textFr} onChange={e=>{const nq=[...questions];nq[qi]={...nq[qi],textFr:e.target.value};setQuestions(nq);}} placeholder="Question en français..."/></div>
                 {q.options.map((o,oi)=>(
                   <div key={oi} style={{display:'flex',gap:8,marginBottom:6}}>
                     <div style={{width:24,height:24,borderRadius:6,background:q.answer===oi?'#5e17eb':'rgba(255,255,255,0.08)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'#fff',cursor:'pointer',flexShrink:0}} onClick={()=>{const nq=[...questions];nq[qi]={...nq[qi],answer:oi};setQuestions(nq);}}>{['A','B','C','D'][oi]}</div>
-                    <input className="admin-input" value={o} onChange={e=>{const nq=[...questions];const opts=[...nq[qi].options];opts[oi]=e.target.value;nq[qi]={...nq[qi],options:opts};setQuestions(nq);}} placeholder={`Option ${['A','B','C','D'][oi]}`} dir="rtl" style={{fontSize:12}}/>
+                    <div style={{flex:1,display:'flex',flexDirection:'column',gap:4}}>
+                      <input className="admin-input" value={o} onChange={e=>{const nq=[...questions];const opts=[...nq[qi].options];opts[oi]=e.target.value;nq[qi]={...nq[qi],options:opts};setQuestions(nq);}} placeholder={`Option ${['A','B','C','D'][oi]} (AR)`} dir="rtl" style={{fontSize:12}}/>
+                      <input className="admin-input" value={q.optionsFr[oi]} onChange={e=>{const nq=[...questions];const optsFr=[...nq[qi].optionsFr];optsFr[oi]=e.target.value;nq[qi]={...nq[qi],optionsFr:optsFr};setQuestions(nq);}} placeholder={`Option ${['A','B','C','D'][oi]} (FR)`} style={{fontSize:12}}/>
+                    </div>
                   </div>
                 ))}
+                <div className="form-group"><input className="admin-input" value={q.tip} onChange={e=>{const nq=[...questions];nq[qi]={...nq[qi],tip:e.target.value};setQuestions(nq);}} placeholder="نصيحة (اختياري)..." dir="rtl" style={{fontSize:12}}/></div>
+                <div className="form-group"><input className="admin-input" value={q.tipFr} onChange={e=>{const nq=[...questions];nq[qi]={...nq[qi],tipFr:e.target.value};setQuestions(nq);}} placeholder="Astuce en français (optionnel)..." style={{fontSize:12}}/></div>
                 <div style={{display:'flex',gap:10,marginTop:8}}>
                   <select className="admin-select" style={{flex:1}} value={q.zoneIndex} onChange={e=>{const nq=[...questions];nq[qi]={...nq[qi],zoneIndex:+e.target.value};setQuestions(nq);}}>
                     {zones.map((z,zi)=><option key={zi} value={zi}>{z.icon||'📍'} {z.title||`Zone ${zi+1}`}</option>)}

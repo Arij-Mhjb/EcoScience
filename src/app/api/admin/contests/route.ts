@@ -55,7 +55,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { title, description, image, icon, order, durationMin } = body;
+    const { title, titleFr, description, descriptionFr, image, icon, order, durationMin } = body;
 
     if (!title || !description) {
       return NextResponse.json({ error: 'Titre et description requis' }, { status: 400 });
@@ -64,7 +64,9 @@ export async function POST(req: Request) {
     const contest = await prisma.contest.create({
       data: {
         title,
+        titleFr,
         description,
+        descriptionFr,
         image: image || '/images/contest-default.svg',
         icon: icon || '🏆',
         order: order || 99,

@@ -56,6 +56,7 @@ export default function DragDropChallenge({
   onComplete,
 }: DragDropChallengeProps) {
   const { t, locale } = useLanguage();
+  const isAr = locale === 'ar';
   const [selectedItem, setSelectedItem] = useState<ItemId | null>(null);
   const [placements, setPlacements] = useState<Partial<Record<ItemId, ZoneId>>>({});
   const [verified, setVerified] = useState(false);

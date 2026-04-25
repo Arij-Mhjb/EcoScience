@@ -158,11 +158,11 @@ export default function ContestResults({
   contestId,
 }: ContestResultsProps) {
   const { t, locale } = useLanguage();
+  const isAr = locale === 'ar';
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState(false);
 
   const getTurtleConfig = (score: number) => {
-    const isAr = locale === 'ar';
     if (score >= 90) return { mood: "celebrating" as TurtleMood, message: isAr ? "أنت بطل البيئة! 🏆🐢" : "Tu es un héros de l'écologie ! 🏆🐢" };
     if (score >= 70) return { mood: "happy" as TurtleMood, message: isAr ? "عمل رائع! استمر في حماية الكوكب! ⭐🐢" : "Bon travail ! Continue de protéger la planète ! ⭐🐢" };
     if (score >= 50) return { mood: "waving" as TurtleMood, message: isAr ? "مجهود جيد! أنت صديق للبيئة! 💚🐢" : "Bel effort ! Tu es un ami de la nature ! 💚🐢" };

@@ -58,8 +58,10 @@ model Participation {
 // ─── Concours ───────────────────────────────────────────────────
 model Contest {
   id             String          @id @default(auto()) @map("_id") @db.ObjectId
-  title          String          // arabe
-  description    String
+  title          String          // arabe (par défaut)
+  titleFr        String?         // français
+  description    String          // arabe
+  descriptionFr  String?         // français
   image          String
   icon           String          @default("🏆") // emoji
   order          Int
@@ -75,48 +77,57 @@ model Contest {
 
 // ─── Zone (étape dans un concours) ──────────────────────────────
 model Zone {
-  id          String            @id @default(auto()) @map("_id") @db.ObjectId
-  title       String            // arabe
-  description String
-  order       Int
-  icon        String            @default("📍")
-  contestId   String            @db.ObjectId
-  contest     Contest           @relation(fields: [contestId], references: [id])
-  questions   Question[]
-  challenges  VisualChallenge[]
+  id            String            @id @default(auto()) @map("_id") @db.ObjectId
+  title         String            // arabe
+  titleFr       String?           // français
+  description   String            // arabe
+  descriptionFr String?           // français
+  order         Int
+  icon          String            @default("📍")
+  contestId     String            @db.ObjectId
+  contest       Contest           @relation(fields: [contestId], references: [id])
+  questions     Question[]
+  challenges    VisualChallenge[]
 }
 
 // ─── Question (QCM) ─────────────────────────────────────────────
 model Question {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  text    String   // arabe
-  options String[]
-  answer  Int      // index bonne réponse (0-based)
-  points  Int      @default(3)
-  tip     String   // arabe
-  order   Int      @default(0)
-  zoneId  String   @db.ObjectId
-  zone    Zone     @relation(fields: [zoneId], references: [id])
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  text      String   // arabe
+  textFr    String?  // français
+  options   String[] // arabe
+  optionsFr String[] @default([]) // français
+  answer    Int      // index bonne réponse (0-based)
+  points    Int      @default(3)
+  tip       String   // arabe
+  tipFr     String?  // français
+  order     Int      @default(0)
+  zoneId    String   @db.ObjectId
+  zone      Zone     @relation(fields: [zoneId], references: [id])
 }
 
 // ─── Capsule vidéo ──────────────────────────────────────────────
 model Capsule {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  title       String   // arabe
-  description String
-  videoUrl    String
-  duration    Int      // secondes
-  turtleMsg   String   // arabe
-  order       Int      @default(0)
-  contestId   String   @db.ObjectId
-  contest     Contest  @relation(fields: [contestId], references: [id])
-  createdAt   DateTime @default(now())
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  title         String   // arabe
+  titleFr       String?  // français
+  description   String   // arabe
+  descriptionFr String?  // français
+  videoUrl      String
+  duration      Int      // secondes
+  turtleMsg     String   // arabe
+  turtleMsgFr   String?  // français
+  order         Int      @default(0)
+  contestId     String   @db.ObjectId
+  contest       Contest  @relation(fields: [contestId], references: [id])
+  createdAt     DateTime @default(now())
 }
 
 // ─── Défi visuel (drag & drop / matching) ───────────────────────
 model VisualChallenge {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   title     String   // arabe
+  titleFr   String?  // français
   type      String   // "drag_drop" | "matching"
   items     Json
   points    Int      @default(5)

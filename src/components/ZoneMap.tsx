@@ -5,7 +5,9 @@ import { useLanguage } from '@/context/LanguageContext';
 interface ZoneData {
   id: string;
   title: string;
+  titleFr?: string;
   description: string;
+  descriptionFr?: string;
   order: number;
 }
 
@@ -97,7 +99,9 @@ export default function ZoneMap({ zones, completedZones, onZoneClick }: ZoneMapP
                     : status === 'available' ? 'bg-primary text-white shadow-primary/30 cursor-pointer animate-pulse-glow'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>
                 <span className="text-3xl mb-1">{status === 'completed' ? '✅' : status === 'locked' ? '🔒' : icon}</span>
-                <span className="text-xs font-bold px-2 text-center leading-tight">{zone.title}</span>
+                <span className="text-xs font-bold px-2 text-center leading-tight">
+                  {(!isAr && zone.titleFr) ? zone.titleFr : zone.title}
+                </span>
               </motion.button>
 
               {/* Badge */}

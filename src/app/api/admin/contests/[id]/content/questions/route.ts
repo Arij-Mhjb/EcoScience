@@ -48,13 +48,24 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     }
 
     // Création unique
-    const { text, options, answer, points, tip, order, zoneId } = body;
+    const { text, textFr, options, optionsFr, answer, points, tip, tipFr, order, zoneId } = body;
     if (!text || !options || answer === undefined || !zoneId) {
       return NextResponse.json({ error: 'Champs requis manquants' }, { status: 400 });
     }
 
     const question = await prisma.question.create({
-      data: { text, options, answer, points: points || 3, tip: tip || '', order: order || 0, zoneId },
+      data: { 
+        text, 
+        textFr, 
+        options, 
+        optionsFr: optionsFr || [], 
+        answer, 
+        points: points || 3, 
+        tip: tip || '', 
+        tipFr, 
+        order: order || 0, 
+        zoneId 
+      },
     });
 
     return NextResponse.json({ question }, { status: 201 });
