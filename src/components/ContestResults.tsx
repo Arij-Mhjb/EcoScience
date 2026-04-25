@@ -233,9 +233,16 @@ export default function ContestResults({
           <div className="text-sm font-semibold text-white/80 mb-1">
             {t('results_no_retry')}
           </div>
-          <div className="text-xs text-white/60">
+          <div className="text-xs text-white/60 mb-6">
             {t('results_contact_teacher')}
           </div>
+
+          <button
+            onClick={() => window.location.href = `/contest/${contestId}`}
+            className="w-full btn-primary bg-white text-primary hover:bg-white/90 py-3 rounded-full font-bold shadow-lg transition-all"
+          >
+            {t('quiz_return_roadmap')}
+          </button>
         </motion.div>
 
         <AnimatePresence>

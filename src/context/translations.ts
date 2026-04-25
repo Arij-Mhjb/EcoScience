@@ -105,6 +105,9 @@ export const translations = {
     dd_correct_answers: 'إجابات صحيحة من',
     dd_choose_place: 'اختر مكان {item}!',
     dd_start_msg: 'اختر شيئاً ثم ضعه في مكانه الصحيح! 🎯',
+    dd_verify: 'التحقق ✅',
+    dd_excellent: 'رائع! حصلت على {score} نقطة! أنت بطل حقيقي! 🌟',
+    dd_good: 'جيد جداً! حصلت على {score} نقطة! استمر في التعلم! 💪',
 
     // Matching Challenge
     mc_title: 'ماذا يصبح هذا الشيء؟',
@@ -222,6 +225,9 @@ export const translations = {
     dd_correct_answers: 'réponses correctes sur',
     dd_choose_place: 'Choisis la place de {item} !',
     dd_start_msg: 'Choisis un objet puis mets-le au bon endroit ! 🎯',
+    dd_verify: 'Vérifier ✅',
+    dd_excellent: 'Excellent ! Tu as obtenu {score} points ! Tu es un champion ! 🌟',
+    dd_good: 'Très bien ! Tu as obtenu {score} points ! Continue d\'apprendre ! 💪',
 
     // Matching Challenge
     mc_title: 'Que devient cet objet ?',

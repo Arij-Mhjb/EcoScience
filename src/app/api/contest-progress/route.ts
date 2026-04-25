@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
         challengeAnswers: participation.challengeAnswers,
         completedAt: participation.completedAt,
         completedZones: participation.completedZones,
+        lastStep: participation.lastStep,
         status: participation.status,
       },
     });

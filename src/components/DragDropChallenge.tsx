@@ -133,7 +133,7 @@ export default function DragDropChallenge({
           >
             <span className="text-2xl">{selectedItemData?.emoji}</span>
             <span className="font-bold text-primary text-base">{selectedItemData?.label}</span>
-            <span className="text-primary-600 text-sm">— {locale === 'ar' ? 'اختر مكانه أدناه ⬇️' : 'Choisis sa place ci-dessous ⬇️'}</span>
+            <span className="text-primary-600 text-sm">— {isAr ? 'اختر مكانه أدناه ⬇️' : 'Choisis sa place ci-dessous ⬇️'}</span>
           </motion.div>
         )}
       </AnimatePresence>

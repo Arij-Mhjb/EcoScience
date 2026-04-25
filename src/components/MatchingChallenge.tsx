@@ -153,7 +153,7 @@ export default function MatchingChallenge({
           >
             <span className="text-2xl">{selectedLeftData?.emoji}</span>
             <span className="font-bold text-primary text-base">{selectedLeftData?.label}</span>
-            <span className="text-primary-600 text-sm">— {locale === 'ar' ? 'اختر ما تصبح عليه 👈' : 'Choisis ce qu\'elle devient 👈'}</span>
+            <span className="text-primary-600 text-sm">— {isAr ? 'اختر ما تصبح عليه 👈' : 'Choisis ce qu\'elle devient 👈'}</span>
           </motion.div>
         )}
       </AnimatePresence>

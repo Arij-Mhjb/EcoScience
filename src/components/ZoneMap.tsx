@@ -1,8 +1,6 @@
-// Composant ZoneMap — Carte d'aventure avec zones séquentielles
-'use client';
-
 import { motion } from 'framer-motion';
 import Turtle from './Turtle';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ZoneData {
   id: string;
@@ -18,6 +16,8 @@ interface ZoneMapProps {
 }
 
 export default function ZoneMap({ zones, completedZones, onZoneClick }: ZoneMapProps) {
+  const { locale } = useLanguage();
+  const isAr = locale === 'ar';
   const zoneIcons = ['🏝️', '🧪', '🌍'];
   const sortedZones = [...zones].sort((a, b) => a.order - b.order);
 
@@ -82,7 +82,7 @@ export default function ZoneMap({ zones, completedZones, onZoneClick }: ZoneMapP
               {/* Tortue à la zone courante */}
               {isCurrent && (
                 <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
-                  <Turtle mood="waving" size="sm" message="هيا بنا! 🌊" />
+                  <Turtle mood="waving" size="sm" message={isAr ? "هيا بنا! 🌊" : "C'est parti ! 🌊"} />
                 </div>
               )}
 

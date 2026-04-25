@@ -2,6 +2,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface XPBarProps {
   xp: number;
@@ -16,11 +17,13 @@ function getXPForLevel(level: number): number {
 }
 
 export default function XPBar({ xp, level, maxXP, showLabel = true }: XPBarProps) {
+  const { t, locale } = useLanguage();
+  const isAr = locale === 'ar';
   const xpNeeded = maxXP || getXPForLevel(level);
   const progress = Math.min((xp / xpNeeded) * 100, 100);
 
   return (
-    <div className="w-full">
+    <div className="w-full" dir={isAr ? 'rtl' : 'ltr'}>
       {showLabel && (
         <div className="flex justify-between items-center mb-2">
           {/* Niveau */}
@@ -33,13 +36,13 @@ export default function XPBar({ xp, level, maxXP, showLabel = true }: XPBarProps
               ⭐
             </motion.span>
             <span className="font-bold text-primary text-lg">
-              المستوى {level}
+              {isAr ? `المستوى ${level}` : `Niveau ${level}`}
             </span>
           </div>
 
           {/* XP Count */}
           <span className="text-sm font-semibold text-gray-500">
-            {xp} / {xpNeeded} نقطة
+            {xp} / {xpNeeded} {isAr ? 'نقطة' : 'points'}
           </span>
         </div>
       )}

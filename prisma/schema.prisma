@@ -46,6 +46,7 @@ model Participation {
   completedZones   String[]  @default([])
   quizAnswers      Json      @default("{}")
   challengeAnswers Json      @default("{}")
+  lastStep         String    @default("animation")
   status           String    @default("not_started")
   // "not_started" | "in_progress" | "completed"
   startedAt        DateTime?

@@ -5,6 +5,7 @@
 import { motion, AnimatePresence, type TargetAndTransition } from 'framer-motion';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 // Types d'humeur de la tortue
 type TurtleMood = 'idle' | 'happy' | 'sad' | 'thinking' | 'waving' | 'celebrating';
@@ -74,6 +75,8 @@ export default function Turtle({
   className = '',
 }: TurtleProps) {
   const [isMounted, setIsMounted] = useState(false);
+  const { locale } = useLanguage();
+  const isAr = locale === 'ar';
   const { width, height, bubbleClass } = sizeMap[size];
 
   useEffect(() => {
@@ -143,7 +146,7 @@ export default function Turtle({
         >
           <Image
             src="/images/turtle-character.png"
-            alt="السلحفاة البحرية — مرشدك في المغامرة"
+            alt={isAr ? "السلحفاة البحرية — مرشدك في المغامرة" : "La tortue marine — ton guide dans l'aventure"}
             width={width}
             height={height}
             className="drop-shadow-xl object-contain"

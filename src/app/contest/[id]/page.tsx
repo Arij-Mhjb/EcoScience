@@ -29,9 +29,11 @@ export default function ContestPage() {
   const router = useRouter();
   const params = useParams();
   const { t, locale } = useLanguage();
+  const isAr = locale === 'ar';
   const contestId = params.id as string;
   const [contest, setContest] = useState<ContestData | null>(null);
   const [completedZones, setCompletedZones] = useState<string[]>([]);
+  const [participationStatus, setParticipationStatus] = useState<string>("not_started");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,14 +43,19 @@ export default function ContestPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [contestRes, progressRes] = await Promise.all([
+        const [contestRes, progressRes, participationRes] = await Promise.all([
           fetch(`/api/contests/${contestId}`),
           fetch("/api/progress"),
+          fetch(`/api/contest-progress?contestId=${contestId}`),
         ]);
         if (contestRes.ok) setContest(await contestRes.json());
         if (progressRes.ok) {
           const data = await progressRes.json();
           setCompletedZones(data.completedZones || []);
+        }
+        if (participationRes.ok) {
+          const data = await participationRes.json();
+          if (data.progress) setParticipationStatus(data.progress.status);
         }
       } catch (err) {
         console.error("Erreur:", err);
@@ -189,12 +196,19 @@ export default function ContestPage() {
                 onClick={() => router.push(`/contest/${contestId}/play`)}
                 whileHover={{ scale: 1.07 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex-shrink-0 flex items-center gap-2 bg-white text-success-700
-                           font-black text-lg px-7 py-3 rounded-full shadow-lg
-                           hover:bg-success-50 transition-colors duration-200 select-none"
+                className={`flex-shrink-0 flex items-center gap-2 px-7 py-3 rounded-full shadow-lg transition-colors duration-200 select-none font-black text-lg
+                           ${participationStatus === 'completed' 
+                             ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' 
+                             : 'bg-white text-success-700 hover:bg-success-50'}`}
               >
-                <span>🏆</span>
-                <span>{t('start_contest_btn')}</span>
+                <span>{participationStatus === 'completed' ? '🏁' : '🏆'}</span>
+                <span>
+                  {participationStatus === 'completed' 
+                    ? (isAr ? 'عرض النتائج' : 'Voir les résultats') 
+                    : (participationStatus === 'in_progress' 
+                        ? (isAr ? 'مواصلة المسابقة' : 'Continuer le concours')
+                        : t('start_contest_btn'))}
+                </span>
               </motion.button>
             </div>
           </div>

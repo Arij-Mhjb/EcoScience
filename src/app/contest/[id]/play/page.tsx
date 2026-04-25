@@ -8,7 +8,8 @@ import Image from "next/image";
 
 import OpeningAnimation from "@/components/OpeningAnimation";
 import FlashQuestion from "@/components/FlashQuestion";
-import ContestQuiz, { QUESTIONS } from "@/components/ContestQuiz";
+import ContestQuiz from "@/components/ContestQuiz";
+import { QUESTIONS } from "@/data/questions";
 import DragDropChallenge from "@/components/DragDropChallenge";
 import MatchingChallenge from "@/components/MatchingChallenge";
 import ContestResults from "@/components/ContestResults";
@@ -88,48 +89,70 @@ export default function PlayPage() {
       fetch(`/api/contest-progress?contestId=${contestId}`)
         .then((r) => r.json())
         .then((data) => {
-          if (data.progress) {
-            const p = data.progress;
-            if (p.status === "completed") {
-              setQuizScore(p.score);
-              setQuizErrors(p.errors);
-              setGlobalTimer(p.timeSpent);
-              setStep("results");
+          try {
+            if (data.progress) {
+              const p = data.progress;
+              if (p.status === "completed") {
+                setQuizScore(p.score);
+                setQuizErrors(p.errors);
+                setGlobalTimer(p.timeSpent);
+                setStep("results");
               } else if (p.status === "in_progress") {
-              setGlobalTimer(p.timeSpent || 0);
-              const qAns = p.quizAnswers || {};
-              let reconstructed: QuizAnswer[] = [];
-              if (Array.isArray(qAns)) {
-                 reconstructed = qAns;
-              } else if (typeof qAns === 'object') {
-                 Object.entries(qAns).forEach(([qIdx, ansIdx]) => {
-                    const q = QUESTIONS[parseInt(qIdx, 10)];
-                    if (q) {
-                       const correct = (q.answer === ansIdx);
-                       const pts = correct ? q.points : 0;
-                       reconstructed.push({
-                          questionIndex: parseInt(qIdx, 10),
-                          selectedAnswer: ansIdx as number,
-                          correct,
-                          points: pts
-                       });
-                    }
-                 });
-                 reconstructed.sort((a, b) => a.questionIndex - b.questionIndex);
-              }
+                setGlobalTimer(p.timeSpent || 0);
+                
+                if (p.score !== undefined) setQuizScore(p.score);
+                if (p.errors !== undefined) setQuizErrors(p.errors);
 
-              if (reconstructed.length > 0 && reconstructed.length < QUESTIONS.length) {
-                 setInitialQuizAnswers(reconstructed);
-                 setQuizScore(reconstructed.reduce((acc, ans) => acc + ans.points, 0));
-                 setQuizErrors(reconstructed.reduce((acc, ans) => acc + (ans.correct ? 0 : 1), 0));
-                 setStep("quiz");
-                 setTimerActive(true);
+                const qAns = p.quizAnswers || {};
+                let reconstructed: QuizAnswer[] = [];
+                
+                // On utilise QUESTIONS_AR par défaut pour la structure (points/réponses)
+                // car les deux listes ont la même structure.
+                if (Array.isArray(qAns)) {
+                  reconstructed = qAns;
+                } else if (typeof qAns === 'object' && qAns !== null) {
+                  Object.entries(qAns).forEach(([qIdx, ansIdx]) => {
+                    const idx = parseInt(qIdx, 10);
+                    const q = QUESTIONS[idx];
+                    if (q) {
+                      const correct = (q.answer === ansIdx);
+                      reconstructed.push({
+                        questionIndex: idx,
+                        selectedAnswer: ansIdx as number,
+                        correct,
+                        points: correct ? q.points : 0
+                      });
+                    }
+                  });
+                  reconstructed.sort((a, b) => a.questionIndex - b.questionIndex);
+                }
+                setInitialQuizAnswers(reconstructed);
+
+                if (p.lastStep) {
+                  let restoredStep = p.lastStep as ContestStep;
+                  
+                  // Si on est bloqué au quiz mais qu'il est déjà fini, on passe au défi 1
+                  if (restoredStep === "quiz" && reconstructed.length >= QUESTIONS.length) {
+                    restoredStep = "challenge1";
+                  }
+                  
+                  setStep(restoredStep);
+                  if (TIMER_STEPS.includes(restoredStep)) {
+                    setTimerActive(true);
+                  }
+                }
               }
             }
+          } catch (err) {
+            console.error("Error restoring progress:", err);
+          } finally {
+            setInitLoading(false);
           }
-          setInitLoading(false);
         })
-        .catch(() => setInitLoading(false));
+        .catch((err) => {
+          console.error("Fetch progress error:", err);
+          setInitLoading(false);
+        });
     } else if (status !== "loading") {
       setInitLoading(false);
     }
@@ -146,12 +169,50 @@ export default function PlayPage() {
         questionId: lastAnswer.questionIndex,
         answer: lastAnswer.selectedAnswer,
         timeSpent: globalTimer,
+        score: currentScore, // On envoie le score actuel du quiz
+        errors: currentErrors,
+        lastStep: "quiz",
       }),
     }).catch(console.error);
   }, [contestId, globalTimer]);
 
   const totalScore = quizScore + challenge1Score + challenge2Score;
   const totalErrors = quizErrors + challenge1Errors + challenge2Errors;
+
+  // Sauvegarder l'étape quand elle change
+  useEffect(() => {
+    if (step === "animation" || step === "results" || initLoading) return;
+    
+    fetch(`/api/contest/${contestId}/progress`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        lastStep: step,
+        timeSpent: globalTimer,
+        // On n'envoie le score que s'il est significatif pour éviter d'écraser par 0 lors de l'init
+        ...(totalScore > 0 ? { score: totalScore } : {}),
+        ...(totalErrors > 0 ? { errors: totalErrors } : {}),
+      }),
+    }).catch(console.error);
+  }, [step, contestId, initLoading]); // Retiré globalTimer, totalScore, totalErrors pour éviter le spam
+
+  // Sauvegarder le temps toutes les 10 secondes
+  useEffect(() => {
+    if (!timerActive || step === "results" || initLoading) return;
+    
+    const interval = setInterval(() => {
+      fetch(`/api/contest/${contestId}/progress`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          timeSpent: globalTimer,
+        }),
+      }).catch(console.error);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [timerActive, step, contestId, initLoading, globalTimer]);
+
   const showTimer = TIMER_STEPS.includes(step);
 
   const getStepLabel = (step: ContestStep): string | null => {
@@ -331,8 +392,23 @@ export default function PlayPage() {
             >
               <DragDropChallenge
                 onComplete={(r) => {
+                  const newScore = quizScore + r.score;
+                  const newErrors = quizErrors + r.errors;
                   setChallenge1Score(r.score);
                   setChallenge1Errors(r.errors);
+                  
+                  // Sauvegarder immédiatement
+                  fetch(`/api/contest/${contestId}/progress`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      score: newScore,
+                      errors: newErrors,
+                      lastStep: "challenge2",
+                      timeSpent: globalTimer,
+                    }),
+                  }).catch(console.error);
+                  
                   setStep("challenge2");
                 }}
               />
@@ -352,9 +428,24 @@ export default function PlayPage() {
             >
               <MatchingChallenge
                 onComplete={(r) => {
+                  const finalScore = quizScore + challenge1Score + r.score;
+                  const finalErrors = quizErrors + challenge1Errors + r.errors;
                   setChallenge2Score(r.score);
                   setChallenge2Errors(r.errors);
                   setTimerActive(false);
+
+                  // Sauvegarder immédiatement le résultat final avant de passer aux résultats
+                  fetch(`/api/contest/${contestId}/progress`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      score: finalScore,
+                      errors: finalErrors,
+                      lastStep: "results",
+                      timeSpent: globalTimer,
+                    }),
+                  }).catch(console.error);
+
                   setStep("results");
                 }}
               />

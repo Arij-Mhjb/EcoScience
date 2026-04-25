@@ -155,7 +155,7 @@ export default function DashboardPage() {
         {/* Tortue en bas */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
           className="flex justify-center">
-          <Turtle mood="happy" size="md" message={locale === 'ar' ? "اختر مسابقة وهيا بنا! 🐢" : "Choisis un concours et c'est parti ! 🐢"} />
+          <Turtle mood="happy" size="md" message={isAr ? "اختر مسابقة وهيا بنا! 🐢" : "Choisis un concours et c'est parti ! 🐢"} />
         </motion.div>
       </div>
     </main>
