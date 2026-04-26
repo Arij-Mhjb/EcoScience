@@ -13,7 +13,11 @@ export default function ContestResultsPage(){
     fetch(`/api/admin/contests/${id}/results`).then(r=>r.json()).then(d=>{setResults(d.results||[]);setLoading(false);});
   },[id]);
 
-  useEffect(()=>{load();},[load]);
+  useEffect(()=>{
+    load();
+    const interval = setInterval(load, 10000); // Rafraîchissement auto toutes les 10s
+    return () => clearInterval(interval);
+  },[load]);
 
   const fmt=(s:number)=>{if(!s)return'—';return`${Math.floor(s/60)}m ${s%60}s`;};
 
@@ -73,7 +77,7 @@ export default function ContestResultsPage(){
       <div className="admin-card">
         {loading?<div className="empty-state"><div className="empty-state-icon">⏳</div></div>:results.length===0?<div className="empty-state"><div className="empty-state-icon">📭</div><div className="empty-state-text">Aucun résultat</div></div>:(
           <table className="admin-table">
-            <thead><tr><th>Rang</th><th>Élève</th><th>Score</th><th>Temps</th><th>Erreurs</th><th>Statut</th><th>Détail</th></tr></thead>
+            <thead><tr><th>Rang</th><th>Élève</th><th>Score</th><th>Dernière Q</th><th>Temps</th><th>Erreurs</th><th>Statut</th><th>Détail</th></tr></thead>
             <tbody>
               {results.map(r=>(
                 <tr key={r.participationId}>
@@ -86,6 +90,44 @@ export default function ContestResultsPage(){
                   </td>
                   <td>
                     <div style={{fontWeight:800,fontSize:16,color:r.score>=80?'#7ed957':r.score>=50?'#fbbf24':'#f87171'}}>{r.score}</div>
+                  </td>
+                  <td style={{fontSize:12,color:'rgba(255,255,255,0.5)',maxWidth:200,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                    {(() => {
+                      const qa = r.quizAnswers;
+                      if (!qa) return '—';
+                      
+                      let count = 0;
+                      let lastText = '';
+                      let lastIndex = -1;
+
+                      if (Array.isArray(qa)) {
+                        count = qa.length;
+                        if (count > 0) {
+                          lastText = qa[count - 1].questionText;
+                          lastIndex = qa[count - 1].questionIndex;
+                        }
+                      } else if (typeof qa === 'object') {
+                        const keys = Object.keys(qa);
+                        count = keys.length;
+                        if (count > 0) {
+                          // Trouver l'index le plus élevé
+                          const indices = keys.map(k => parseInt(k)).sort((a, b) => b - a);
+                          lastIndex = indices[0];
+                          const lastVal = qa[String(lastIndex)];
+                          // Si c'est un objet (nouveau format), on prend le texte
+                          if (lastVal && typeof lastVal === 'object') {
+                            lastText = lastVal.questionText;
+                          }
+                        }
+                      }
+
+                      if (count === 0) return '—';
+                      return (
+                        <span title={lastText || `Question ${lastIndex + 1}`}>
+                          Q{count} {lastText ? `: ${lastText}` : ''}
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td style={{color:'rgba(255,255,255,0.5)',fontSize:13}}>{fmt(r.timeSpent)}</td>
                   <td style={{color:r.errors>3?'#f87171':'rgba(255,255,255,0.6)'}}>{r.errors}</td>

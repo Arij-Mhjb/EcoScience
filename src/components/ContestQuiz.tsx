@@ -161,7 +161,7 @@ export default function ContestQuiz({
     setAnswers((prev) => {
       const newAnswers = [
         ...prev,
-        { questionIndex: currentQ, selectedAnswer: idx, correct, points: pts },
+        { questionIndex: currentQ, questionText: q.text, selectedAnswer: idx, correct, points: pts },
       ];
       if (onProgress) {
         onProgress(newAnswers, newScore, newErrors);

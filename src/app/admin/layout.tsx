@@ -9,11 +9,7 @@ export const metadata = {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" dir="ltr" suppressHydrationWarning>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-      <body style={{ margin: 0, fontFamily: "'Inter', 'Segoe UI', sans-serif", background: '#0a0a1a', color: '#fff' }}>
+    <div className="admin-root-container" style={{ margin: 0, fontFamily: "'Inter', 'Segoe UI', sans-serif", background: '#0a0a1a', color: '#fff', minHeight: '100vh' }}>
         {children}
 
         <style>{`
@@ -401,7 +397,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
           ::-webkit-scrollbar-thumb { background: rgba(94,23,235,0.4); border-radius: 4px; }
         `}</style>
-      </body>
-    </html>
+    </div>
   );
 }

@@ -10,7 +10,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
     const userId = (session.user as { id: string }).id;
     const contestId = params.id;
-    const { questionId, answer, timeSpent, completedZones, lastStep, score, errors } = await req.json();
+    const { questionId, answer, questionText, timeSpent, completedZones, lastStep, score, errors } = await req.json();
 
     let participation = await prisma.participation.findFirst({ where: { userId, contestId } });
 
@@ -32,7 +32,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     }
 
     if (questionId !== undefined && answer !== undefined) {
-      currentAnswers[String(questionId)] = answer;
+      if (questionText) {
+        currentAnswers[String(questionId)] = { answer, questionText };
+      } else {
+        currentAnswers[String(questionId)] = answer;
+      }
     }
 
     if (completedZones && Array.isArray(completedZones)) {
@@ -49,7 +53,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           score: score !== undefined ? score : participation.score,
           errors: errors !== undefined ? errors : participation.errors,
           lastStep: lastStep || participation.lastStep,
-          status: 'in_progress'
+          status: lastStep === 'results' ? 'completed' : 'in_progress',
+          completedAt: lastStep === 'results' ? new Date() : participation.completedAt
         },
       });
     } else {
@@ -63,7 +68,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           score: score || 0,
           errors: errors || 0,
           lastStep: lastStep || 'animation',
-          status: 'in_progress'
+          status: lastStep === 'results' ? 'completed' : 'in_progress',
+          completedAt: lastStep === 'results' ? new Date() : null
         },
       });
     }

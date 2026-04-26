@@ -112,13 +112,15 @@ export default function PlayPage() {
                 if (Array.isArray(qAns)) {
                   reconstructed = qAns;
                 } else if (typeof qAns === 'object' && qAns !== null) {
-                  Object.entries(qAns).forEach(([qIdx, ansIdx]) => {
+                  Object.entries(qAns).forEach(([qIdx, val]) => {
                     const idx = parseInt(qIdx, 10);
                     const q = QUESTIONS[idx];
                     if (q) {
+                      const ansIdx = (typeof val === 'object' && val !== null) ? (val as any).answer : val;
                       const correct = (q.answer === ansIdx);
                       reconstructed.push({
                         questionIndex: idx,
+                        questionText: (typeof val === 'object' && val !== null) ? (val as any).questionText : q.text,
                         selectedAnswer: ansIdx as number,
                         correct,
                         points: correct ? q.points : 0
@@ -169,8 +171,9 @@ export default function PlayPage() {
       body: JSON.stringify({
         questionId: lastAnswer.questionIndex,
         answer: lastAnswer.selectedAnswer,
+        questionText: lastAnswer.questionText,
         timeSpent: globalTimer,
-        score: currentScore, // On envoie le score actuel du quiz
+        score: currentScore,
         errors: currentErrors,
         lastStep: "quiz",
       }),
@@ -184,13 +187,24 @@ export default function PlayPage() {
   useEffect(() => {
     if (step === "animation" || step === "results" || initLoading) return;
     
+    const challengeData: any = {};
+    if (step === "challenge1") {
+      challengeData.questionId = 18;
+      challengeData.questionText = locale === 'ar' ? "تحدي: فرز النفايات" : "Défi : Tri des déchets";
+      challengeData.answer = true;
+    } else if (step === "challenge2") {
+      challengeData.questionId = 19;
+      challengeData.questionText = locale === 'ar' ? "تحدي: التعرف على المواد" : "Défi : Reconnaissance";
+      challengeData.answer = true;
+    }
+
     fetch(`/api/contest/${contestId}/progress`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         lastStep: step,
         timeSpent: globalTimer,
-        // On n'envoie le score que s'il est significatif pour éviter d'écraser par 0 lors de l'init
+        ...challengeData,
         ...(totalScore > 0 ? { score: totalScore } : {}),
         ...(totalErrors > 0 ? { errors: totalErrors } : {}),
       }),

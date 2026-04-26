@@ -35,6 +35,7 @@ export default function ZonePage() {
   const router = useRouter();
   const params = useParams();
   const { t, locale } = useLanguage();
+  const isAr = locale === 'ar';
   const zoneId = params.id as string;
   const [zone, setZone] = useState<ZoneData | null>(null);
   const [completed, setCompleted] = useState(false);
