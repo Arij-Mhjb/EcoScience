@@ -96,28 +96,29 @@ export default function DashboardPage() {
 
   // Données fallback si l'API n'est pas encore connectée
   const displayContests = contests.length > 0 ? contests.map(c => {
+    const isLocked = c.id === '69e51150482488070228f2b8' || c.id === '69e51153482488070228f2cd';
     if (!isAr && !c.titleFr && SYSTEM_CONTESTS[c.id]) {
-      return { ...c, titleFr: SYSTEM_CONTESTS[c.id].title, descriptionFr: SYSTEM_CONTESTS[c.id].description };
+      return { ...c, titleFr: SYSTEM_CONTESTS[c.id].title, descriptionFr: SYSTEM_CONTESTS[c.id].description, isActive: !isLocked };
     }
-    return c;
+    return { ...c, isActive: !isLocked };
   }) : [
     { 
       id: '69e51150482488070228f2b8', 
       title: locale === 'ar' ? '♻️ إعادة تدوير المواد' : '♻️ Recyclage des matériaux', 
       description: locale === 'ar' ? 'تعلّم كيفية فرز النفايات وإعادة تدوير المواد لحماية البيئة' : 'Apprends à trier les déchets et recycler les matériaux pour protéger l\'environnement', 
-      image: '/images/contest-recycling.svg', order: 1 
+      image: '/images/contest-recycling.svg', order: 1, isActive: false
     },
     { 
       id: '69e51153482488070228f2cd', 
       title: locale === 'ar' ? '🌱 التسميد وتدبير النفايات العضوية' : '🌱 Compostage et gestion bio', 
-      description: locale === 'ar' ? 'اكتشف كيف تتحول النفايات العضوية إلى سماد طبيعي مفيد' : 'Découvre comment les déchets organiques se transforment en compost naturel utile', 
-      image: '/images/contest-compost.svg', order: 2 
+      description: locale === 'ar' ? 'اكتشف كيف تتحول النفايات العضوية إلى سماد طبيعي مفيد' : 'Découvre comment des déchets organiques se transforment en compost naturel utile', 
+      image: '/images/contest-compost.svg', order: 2, isActive: false
     },
     { 
       id: '69e51153482488070228f2ce', 
-      title: locale === 'ar' ? '🌍 إنقاذ الكوكب' : '🌍 Sauver la planète', 
-      description: locale === 'ar' ? 'مغامرة شاملة لحماية كوكبنا من التلوث والنفايات' : 'Une aventure complète pour protéger notre planète de la pollution et des déchets', 
-      image: '/images/contest-planet.svg', order: 3 
+      title: locale === 'ar' ? '🌍 البيئة والمناخ' : '🌍 Environnement et Climat', 
+      description: locale === 'ar' ? 'مغامرة شاملة لحماية كوكبنا من التلوث والحرارة' : 'Une aventure complète pour protéger notre planète de la pollution et de la chaleur', 
+      image: '/images/contest-planet.svg', order: 3, isActive: true
     },
   ];
 
@@ -125,9 +126,9 @@ export default function DashboardPage() {
     <main className="min-h-screen bg-gradient-to-b from-primary-50 via-white to-ocean-light/10">
       {/* En-tête */}
       <header className="bg-white/80 backdrop-blur-sm shadow-sm sticky top-[60px] z-40">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 py-1.5 flex items-center justify-between">
           <div className="flex items-center">
-            <Image src="/images/ecoscience-text-logo.png" alt="InNOScEnce" width={120} height={120} className="object-contain" />
+            <Image src="/images/ecoscience-text-logo.png" alt="InNOScEnce" width={90} height={90} className="object-contain" />
           </div>
           <div className="flex items-center gap-4">
             <span className="text-sm font-semibold text-gray-600">
@@ -170,7 +171,7 @@ export default function DashboardPage() {
               description={(!isAr && contest.descriptionFr) ? contest.descriptionFr : contest.description}
               image={contest.image}
               order={contest.order}
-              isActive={contest.order === 1 || contest.isActive}
+              isActive={contest.isActive}
               onClick={() => router.push(`/contest/${contest.id}`)}
             />
           ))}

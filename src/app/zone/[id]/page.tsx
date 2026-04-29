@@ -6,6 +6,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Turtle from '@/components/Turtle';
+import VideoZone from '@/components/VideoZone';
 import { useLanguage } from '@/context/LanguageContext';
 
 interface Question {
@@ -40,6 +41,7 @@ export default function ZonePage() {
   const [zone, setZone] = useState<ZoneData | null>(null);
   const [completed, setCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedSong, setSelectedSong] = useState<any>(null);
 
   useEffect(() => {
     if (status === 'unauthenticated') router.push('/login');
@@ -80,12 +82,27 @@ export default function ZonePage() {
           ? 'اكتشف كيف يمكن لتصرّفات بسيطة مثل رمي النفايات في مكانها الصحيح وإعادة التدوير أن تُسهم في حماية كوكبنا'
           : 'Découvre comment des gestes simples, comme jeter les déchets au bon endroit et recycler, peuvent contribuer à protéger notre planète.'
       },
+      // Climate Zones
+      '69e51151482488070228f2c5': { 
+        title: locale === 'ar' ? 'فيديوهات تعليمية (سهل)' : 'Vidéos Éducatives (Facile)', 
+        description: locale === 'ar' ? 'شاهد وتعلم عن أساسيات كوكبنا' : 'Regarde et apprends les bases de notre planète'
+      },
+      '69e51151482488070228f2c6': { 
+        title: locale === 'ar' ? 'أغاني وتحديات متوسطة' : 'Chansons et Défis Moyens', 
+        description: locale === 'ar' ? 'استمتع بالأغاني وتعلم عن البحار' : 'Profite des chansons et apprends sur les mers'
+      },
+      '69e51151482488070228f2c7': { 
+        title: locale === 'ar' ? 'حقائق وتحديات متقدمة' : 'Faits et Défis Avancés', 
+        description: locale === 'ar' ? 'اكتشف أسرار الطاقة والحقائق المدهشة' : 'Découvre les secrets de l\'énergie et des faits étonnants'
+      },
     };
+
+    const isClimateId = id === '69e51151482488070228f2c5' || id === '69e51151482488070228f2c6' || id === '69e51151482488070228f2c7';
 
     if (SYSTEM_ZONES[id]) {
       return {
         id,
-        contestId: realContestId || '69e51150482488070228f2b8',
+        contestId: realContestId || (isClimateId ? '69e51153482488070228f2ce' : '69e51150482488070228f2b8'),
         questions: [],
         title: SYSTEM_ZONES[id].title,
         description: SYSTEM_ZONES[id].description,
@@ -131,7 +148,24 @@ export default function ZonePage() {
     return { id, contestId: '', questions: [], ...factsList[index] };
   };
 
-  const isSpecialZone = zoneId === '69e51151482488070228f2ba' || zoneId === '69e51151482488070228f2bf' || zoneId === '69e51151482488070228f2c4';
+  const SONGS = [
+    { id: 's1', title: 'أغنية الأرض 🌍', youtubeId: 'LhhS9FzCpZM', icon: '🎵', color: 'bg-green-100' },
+    { id: 's3', title: 'نحن حماة البيئة 🦸‍♂️', youtubeId: '8xfs4OHFkyw', icon: '🎵', color: 'bg-emerald-100' },
+  ];
+
+  const FACTS = [
+    { id: 'f1', textAr: 'الحيتان تساعد في امتصاص الكربون من الجو! 🐋', textFr: 'Les baleines aident à absorber le carbone ! 🐋', icon: '🐳' },
+    { id: 'f2', textAr: 'الطاقة الشمسية كافية لتزويد العالم كله بالكهرباء! ☀️', textFr: 'Le soleil peut éclairer le monde entier ! ☀️', icon: '⚡' },
+    { id: 'f3', textAr: 'الغابات المطيرة تنتج 20% من أكسجين العالم! 🌳', textFr: 'Les forêts produisent 20% de l\'oxygène ! 🌳', icon: '🍃' },
+    { id: 'f4', textAr: 'تدوير علبة واحدة يوفر طاقة لتشغيل التلفاز 3 ساعات! 📺', textFr: 'Recycler une boîte sauve 3h de TV ! 📺', icon: '♻️' },
+    { id: 'f5', textAr: 'الشعاب المرجانية تحمي السواحل من العواصف! 🪸', textFr: 'Le corail protège nos côtes ! 🪸', icon: '🌊' },
+  ];
+
+  const isSpecialZone = zoneId === '69e51151482488070228f2ba' || zoneId === '69e51151482488070228f2bf' || zoneId === '69e51151482488070228f2c4' || zoneId === '69e51151482488070228f2c5' || zoneId === '69e51151482488070228f2c6' || zoneId === '69e51151482488070228f2c7';
+  const isVideoZone1 = zoneId === '69e51151482488070228f2c5';
+  const isVideoZone2 = zoneId === '69e51151482488070228f2c6';
+  const isVideoZone3 = zoneId === '69e51151482488070228f2c7';
+  const isClimateZone = isVideoZone1 || isVideoZone2 || isVideoZone3;
   
   // Appliquer les traductions système au besoin
   let displayZone = (isSpecialZone ? getFallback(zoneId, zone?.contestId) : zone) || getFallback(zoneId);
@@ -153,10 +187,10 @@ export default function ZonePage() {
     }
   }, [zoneId]);
 
-  const handleComplete = () => {
-    setCompleted(true);
+  const handleComplete = async () => {
     const earnedXP = 0;
-    saveProgress(earnedXP, displayZone.contestId);
+    await saveProgress(earnedXP, displayZone.contestId);
+    setCompleted(true);
   };
 
   if (loading) {
@@ -186,12 +220,62 @@ export default function ZonePage() {
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         <AnimatePresence mode="wait">
-          {!completed ? (
             <motion.div key="lesson" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
               <div className="mb-8">
-                <Turtle mood="happy" size="lg" message={t('ready_discover')} />
+                <Turtle mood="happy" size="lg" message={isClimateZone ? (isAr ? "اكتشف تحدياتنا الرائعة! 🌟" : "Découvre nos super défis ! 🌟") : t('ready_discover')} />
               </div>
               
+              {isClimateZone ? (
+                <div className="space-y-12">
+                  <VideoZone 
+                    difficulty={isVideoZone1 ? "easy" : isVideoZone2 ? "medium" : "hard"} 
+                    onComplete={isVideoZone1 ? handleComplete : () => {}} 
+                  />
+                  
+                  {isVideoZone2 && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-16">
+                       <h3 className="text-3xl font-black text-primary-800 mb-8">{isAr ? "🎵 أغاني البيئة الـ 5" : "🎵 5 Chansons de l'Environnement"}</h3>
+                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                         {SONGS.map((song) => (
+                           <div 
+                             key={song.id} 
+                             onClick={() => song.youtubeId && setSelectedSong(song)}
+                             className={`p-6 rounded-2xl ${song.color} flex items-center justify-between shadow-sm cursor-pointer hover:scale-105 transition-transform ${!song.youtubeId ? 'opacity-60 grayscale-[0.5]' : ''}`}
+                           >
+                             <div className="flex flex-col items-start">
+                               <span className="text-xl font-bold text-gray-800">{song.title}</span>
+                               {!song.youtubeId && <span className="text-xs text-gray-500 font-bold">{isAr ? 'قريباً...' : 'Bientôt...'}</span>}
+                             </div>
+                             <span className="text-3xl">{song.icon}</span>
+                           </div>
+                         ))}
+                       </div>
+                       <button onClick={handleComplete} className="btn-primary mt-12 px-12 py-4 text-xl">
+                          {isAr ? "أنهيت زون 2! 🐢✨" : "Fini la Zone 2 ! 🐢✨"}
+                       </button>
+                    </motion.div>
+                  )}
+
+                  {isVideoZone3 && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-16">
+                       <h3 className="text-3xl font-black text-primary-800 mb-8">{isAr ? "💡 بطاقات هل تعلم؟" : "💡 Cartes 'Le savais-tu ?'"}</h3>
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         {FACTS.map((fact) => (
+                           <motion.div whileHover={{ rotate: [-1, 1, 0] }} key={fact.id} className="bg-white p-6 rounded-3xl border-4 border-amber-100 shadow-lg text-right">
+                              <span className="text-4xl block mb-4">{fact.icon}</span>
+                              <p className="text-lg font-bold text-gray-700 leading-relaxed">
+                                {isAr ? fact.textAr : fact.textFr}
+                              </p>
+                           </motion.div>
+                         ))}
+                       </div>
+                       <button onClick={handleComplete} className="btn-primary mt-12 px-12 py-4 text-xl">
+                          {isAr ? "أنهيت زون 3! 🏆✨" : "Fini la Zone 3 ! 🏆✨"}
+                       </button>
+                    </motion.div>
+                  )}
+                </div>
+              ) : (
                 <div className="bg-white rounded-3xl shadow-xl p-6 md:p-12 border border-primary-100 max-w-3xl mx-auto">
                   <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-10 border-b border-primary-50 pb-6">
                     <motion.div 
@@ -243,17 +327,18 @@ export default function ZonePage() {
                       ))}
                     </div>
                   )}
-                
-                <div className="flex justify-center mt-12">
-                  <button 
-                    onClick={handleComplete}
-                    className="btn-primary text-2xl px-12 py-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3 group"
-                  >
-                    <span className="group-hover:scale-110 transition-transform">{t('im_hero')}</span>
-                    <span className="text-3xl">🐢</span>
-                  </button>
+                  
+                  <div className="flex justify-center mt-12">
+                    <button 
+                      onClick={handleComplete}
+                      className="btn-primary text-2xl px-12 py-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-3 group"
+                    >
+                      <span className="group-hover:scale-110 transition-transform">{t('im_hero')}</span>
+                      <span className="text-3xl">🐢</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </motion.div>
           ) : (
             /* Écran de fin */
@@ -292,6 +377,32 @@ export default function ZonePage() {
                 </motion.button>
               </motion.div>
             </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Modal pour les chansons */}
+        <AnimatePresence>
+          {selectedSong && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+              <motion.div 
+                initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white w-full max-w-3xl rounded-[40px] overflow-hidden shadow-2xl relative"
+              >
+                <button onClick={() => setSelectedSong(null)} className="absolute top-6 right-6 z-20 w-12 h-12 bg-black/20 text-white rounded-full flex items-center justify-center text-2xl font-black">✕</button>
+                <div className="aspect-video bg-black">
+                  <iframe
+                    width="100%" height="100%"
+                    src={`https://www.youtube.com/embed/${selectedSong.youtubeId}?autoplay=1`}
+                    title="Song player" frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen
+                  />
+                </div>
+                <div className="p-8 text-center bg-primary-50">
+                  <h3 className="text-2xl font-black text-primary-900 mb-2">{selectedSong.title}</h3>
+                  <p className="text-primary-600 font-bold">{isAr ? "استمتع بالأغنية وتعلم كيف نحمي كوكبنا! 🎵🌍" : "Profite de la chanson et apprends à protéger notre planète ! 🎵🌍"}</p>
+                </div>
+              </motion.div>
+            </div>
           )}
         </AnimatePresence>
       </div>

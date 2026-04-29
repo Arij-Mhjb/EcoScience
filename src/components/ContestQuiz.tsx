@@ -4,7 +4,6 @@ import { useState, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Turtle from "./Turtle";
 import { useLanguage } from "@/context/LanguageContext";
-import { QUESTIONS_AR, QUESTIONS_FR } from "@/data/questions";
 
 /* ─── Interfaces ─────────────────────────────────────────────────────────── */
 
@@ -25,11 +24,12 @@ interface QuizResult {
 interface ContestQuizProps {
   timeSpent: number;
   initialAnswers?: QuizAnswer[];
+  questions: any[];
   onComplete: (result: QuizResult) => void;
   onProgress?: (answers: QuizAnswer[], currentScore: number, currentErrors: number) => void;
 }
 
-export const QUESTIONS = QUESTIONS_AR;
+
 
 const LABELS = ["A", "B", "C"];
 
@@ -44,10 +44,12 @@ function formatTime(seconds: number): string {
 function SequenceView({
   type,
   showSkip,
+  isClimate,
   onSkip,
 }: {
   type: number;
   showSkip: boolean;
+  isClimate?: boolean;
   onSkip: () => void;
 }) {
   const { t, locale } = useLanguage();
@@ -67,14 +69,24 @@ function SequenceView({
           <div className="flex flex-col items-center">
             <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }} className="text-6xl mb-6 bg-primary-50 p-6 rounded-full shadow-kid">💡</motion.div>
             <h2 className="text-2xl font-black text-amber-500 mb-2">{t('did_you_know')}</h2>
-            <p className="text-xl font-bold text-primary-800 text-center leading-relaxed px-4">{isAr ? 'الزجاج يمكن إعادة تدويره إلى الأبد!' : 'Le verre peut être recyclé à l\'infini !'}</p>
+            <p className="text-xl font-bold text-primary-800 text-center leading-relaxed px-4">
+              {isClimate 
+                ? (isAr ? 'زراعة شجرة واحدة تمتص الكثير من الكربون!' : 'Planter un arbre absorbe beaucoup de carbone !')
+                : (isAr ? 'الزجاج يمكن إعادة تدويره إلى الأبد!' : 'Le verre peut être recyclé à l\'infini !')}
+            </p>
           </div>
         );
       case 2:
         return (
           <div className="flex flex-col items-center">
-            <motion.div animate={{ x: [0, 60, 90], y: [0, -30, 0], rotate: [0, 180, 360], opacity: [1, 1, 0] }} transition={{ duration: 2, repeat: Infinity }} className="text-7xl mb-12">🥤</motion.div>
-            <h2 className="text-xl font-bold text-success-700 text-center mt-8">{isAr ? 'كل نفاية في مكانها الصحيح!' : 'Chaque déchet à sa place !'}</h2>
+            <motion.div animate={{ x: isClimate ? [0, 0] : [0, 60, 90], y: isClimate ? [0, -20, 0] : [0, -30, 0], rotate: isClimate ? [0, 10, -10, 0] : [0, 180, 360], opacity: [1, 1, 1] }} transition={{ duration: 2, repeat: Infinity }} className="text-7xl mb-12">
+              {isClimate ? '🌍' : '🥤'}
+            </motion.div>
+            <h2 className="text-xl font-bold text-success-700 text-center mt-8">
+              {isClimate 
+                ? (isAr ? 'كل خطوة صغيرة تساعد في تبريد الكوكب!' : 'Chaque petit geste aide à refroidir la planète !')
+                : (isAr ? 'كل نفاية في مكانها الصحيح!' : 'Chaque déchet à sa place !')}
+            </h2>
           </div>
         );
       case 3:
@@ -115,12 +127,13 @@ function SequenceView({
 export default function ContestQuiz({
   timeSpent,
   initialAnswers = [],
+  questions,
   onComplete,
   onProgress,
 }: ContestQuizProps) {
   const { t, locale } = useLanguage();
   const isAr = locale === 'ar';
-  const QUESTIONS_LIST = useMemo(() => isAr ? QUESTIONS_AR : QUESTIONS_FR, [isAr]);
+  const QUESTIONS_LIST = questions;
   
   const [currentQ, setCurrentQ] = useState(initialAnswers.length);
   const [selected, setSelected] = useState<number | null>(null);
@@ -236,7 +249,7 @@ export default function ContestQuiz({
 
         <AnimatePresence mode="wait">
           {sequenceActive ? (
-            <SequenceView key="sequence" type={sequenceType} showSkip={showSkip} onSkip={skipSequence} />
+            <SequenceView key="sequence" type={sequenceType} showSkip={showSkip} isClimate={questions.length > 20} onSkip={skipSequence} />
           ) : (
             <motion.div key={currentQ} initial={{ opacity: 0, x: locale === 'ar' ? 60 : -60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: locale === 'ar' ? -60 : 60 }} transition={{ duration: 0.3 }}>
               <div className="bg-white rounded-kid shadow-kid p-6 md:p-8">
@@ -259,7 +272,7 @@ export default function ContestQuiz({
                 {answered && (
                   <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
                     <div className="flex justify-center mb-6">
-                      <Turtle mood="happy" message={`${locale === 'ar' ? 'شكراً! هل تعلم أن...' : 'Merci ! Le savais-tu...'} 🐢 ${q.tip}`} size="md" />
+                      <Turtle mood="happy" message={`${isAr ? '💡 معلومة مفيدة:' : '💡 Le savais-tu...'} ${q.tip}`} size="md" />
                     </div>
                     <button onClick={handleNext} className="w-full btn-primary py-3 text-lg">
                       {isLastQ ? t('quiz_finish') : t('quiz_next')} {locale === 'ar' ? '➡️' : '➡️'}

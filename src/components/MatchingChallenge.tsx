@@ -13,39 +13,58 @@ interface ChallengeResult {
 }
 
 interface MatchingChallengeProps {
+  contestId?: string;
   onComplete: (result: ChallengeResult) => void;
 }
 
-const LEFT_DATA = [
+const RECYCLING_LEFT = [
   { id: "L1", ar: "أوراق قديمة", fr: "Vieux papiers", emoji: "📄" },
   { id: "L2", ar: "زجاجة زجاج", fr: "Bouteille en verre", emoji: "🫙" },
   { id: "L3", ar: "علبة معدنية", fr: "Boîte de conserve", emoji: "🥫" },
   { id: "L4", ar: "زجاجة بلاستيك", fr: "Bouteille plastique", emoji: "🧴" },
-] as const;
+];
 
-const RIGHT_DATA = [
+const CLIMATE_LEFT = [
+  { id: "L1", ar: "شمس ساطعة", fr: "Soleil brillant", emoji: "☀️" },
+  { id: "L2", ar: "رياح قوية", fr: "Vent fort", emoji: "🌬️" },
+  { id: "L3", ar: "مياه جارية", fr: "Eau courante", emoji: "🌊" },
+  { id: "L4", ar: "غابة خضراء", fr: "Forêt verte", emoji: "🌳" },
+];
+
+const RECYCLING_RIGHT = [
   { id: "R3", ar: "علبة معدنية جديدة", fr: "Nouvelle boîte", emoji: "✨🥫" },
   { id: "R1", ar: "كراسة جديدة", fr: "Nouveau cahier", emoji: "✨📓" },
   { id: "R4", ar: "منتج بلاستيكي جديد", fr: "Nouveau produit plastique", emoji: "✨🧴" },
   { id: "R2", ar: "زجاجة جديدة", fr: "Nouvelle bouteille", emoji: "✨🫙" },
-] as const;
+];
 
-type LeftId = (typeof LEFT_DATA)[number]["id"];
-type RightId = (typeof RIGHT_DATA)[number]["id"];
+const CLIMATE_RIGHT = [
+  { id: "R1", ar: "طاقة شمسية", fr: "Énergie solaire", emoji: "🔋" },
+  { id: "R2", ar: "طاقة الرياح", fr: "Énergie éolienne", emoji: "⚙️" },
+  { id: "R3", ar: "طاقة مائية", fr: "Énergie hydro", emoji: "💡" },
+  { id: "R4", ar: "هواء نقي", fr: "Air pur", emoji: "✨🌬️" },
+];
 
-const CORRECT_PAIRS: Record<LeftId, RightId> = { L1: "R1", L2: "R2", L3: "R3", L4: "R4" };
+const RECYCLING_ANSWERS: Record<string, string> = { L1: "R1", L2: "R2", L3: "R3", L4: "R4" };
+const CLIMATE_ANSWERS: Record<string, string> = { L1: "R1", L2: "R2", L3: "R3", L4: "R4" };
 
 const PAIR_COLORS = [
   "bg-blue-100 border-blue-400", "bg-green-100 border-green-400", "bg-orange-100 border-orange-400", "bg-pink-100 border-pink-400",
 ] as const;
 
 export default function MatchingChallenge({
+  contestId,
   onComplete,
 }: MatchingChallengeProps) {
+  const isClimate = contestId === '69e51153482488070228f2ce';
+  const LEFT_DATA = isClimate ? CLIMATE_LEFT : RECYCLING_LEFT;
+  const RIGHT_DATA = isClimate ? CLIMATE_RIGHT : RECYCLING_RIGHT;
+  const CORRECT_PAIRS = isClimate ? CLIMATE_ANSWERS : RECYCLING_ANSWERS;
+
   const { t, locale } = useLanguage();
   const isAr = locale === 'ar';
-  const [selectedLeft, setSelectedLeft] = useState<LeftId | null>(null);
-  const [pairs, setPairs] = useState<Partial<Record<LeftId, RightId>>>({});
+  const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
+  const [pairs, setPairs] = useState<Partial<Record<string, string>>>({});
   const [verified, setVerified] = useState(false);
   const [score, setScore] = useState(0);
   const [errors, setErrors] = useState(0);
@@ -56,11 +75,11 @@ export default function MatchingChallenge({
   const pairCount = Object.keys(pairs).length;
   const allPaired = pairCount === LEFT_ITEMS.length;
 
-  const getLeftIndex = (leftId: LeftId): number => LEFT_ITEMS.findIndex((i) => i.id === leftId);
-  const getLeftForRight = (rightId: RightId): LeftId | null =>
-    (Object.entries(pairs) as [LeftId, RightId][]).find(([, rId]) => rId === rightId)?.[0] ?? null;
+  const getLeftIndex = (leftId: string): number => LEFT_ITEMS.findIndex((i) => i.id === leftId);
+  const getLeftForRight = (rightId: string): string | null =>
+    (Object.entries(pairs) as [string, string][]).find(([, rId]) => rId === rightId)?.[0] ?? null;
 
-  const handleLeftClick = (leftId: LeftId) => {
+  const handleLeftClick = (leftId: string) => {
     if (verified) return;
     if (selectedLeft === leftId) { setSelectedLeft(null); return; }
     if (pairs[leftId]) {
@@ -73,7 +92,7 @@ export default function MatchingChallenge({
     setSelectedLeft(leftId);
   };
 
-  const handleRightClick = (rightId: RightId) => {
+  const handleRightClick = (rightId: string) => {
     if (verified) return;
     const existingLeft = getLeftForRight(rightId);
     if (!selectedLeft) {
@@ -99,7 +118,7 @@ export default function MatchingChallenge({
     let correct = 0;
     let err = 0;
     LEFT_ITEMS.forEach((item) => {
-      if (pairs[item.id as LeftId] === CORRECT_PAIRS[item.id as LeftId]) correct++;
+      if (pairs[item.id] === CORRECT_PAIRS[item.id]) correct++;
       else err++;
     });
     setScore(correct * 5);
@@ -107,14 +126,14 @@ export default function MatchingChallenge({
     setVerified(true);
   };
 
-  const getLeftClass = (leftId: LeftId): string => {
+  const getLeftClass = (leftId: string): string => {
     if (verified) return pairs[leftId] === CORRECT_PAIRS[leftId] ? "border-2 border-success bg-success/10" : "border-2 border-red-400 bg-red-50";
     if (selectedLeft === leftId) return "border-2 border-primary bg-primary-50 ring-2 ring-primary ring-offset-2 scale-105";
     if (pairs[leftId]) { const idx = getLeftIndex(leftId); return `border-2 ${PAIR_COLORS[idx]}`; }
     return "border-2 border-gray-200 bg-white hover:border-primary hover:bg-primary-50";
   };
 
-  const getRightClass = (rightId: RightId): string => {
+  const getRightClass = (rightId: string): string => {
     if (verified) {
       const leftId = getLeftForRight(rightId);
       if (!leftId) return "border-2 border-gray-200 bg-gray-50 opacity-40";
@@ -237,9 +256,9 @@ export default function MatchingChallenge({
         {!verified && pairCount > 0 && (
           <div className="flex flex-wrap justify-center gap-2 mt-2">
             {LEFT_ITEMS.map((item) => {
-              if (!pairs[item.id as LeftId]) return null;
-              const idx = getLeftIndex(item.id as LeftId);
-              const pairedRight = RIGHT_ITEMS.find((r) => r.id === pairs[item.id as LeftId]);
+              if (!pairs[item.id]) return null;
+              const idx = getLeftIndex(item.id);
+              const pairedRight = RIGHT_ITEMS.find((r) => r.id === pairs[item.id]);
               return (
                 <span key={item.id} className={`text-xs px-2 py-0.5 rounded-full border font-medium ${PAIR_COLORS[idx]}`}>{item.emoji} ↔ {pairedRight?.emoji}</span>
               );

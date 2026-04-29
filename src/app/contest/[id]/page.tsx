@@ -84,11 +84,18 @@ export default function ContestPage() {
   };
 
   // Données fallback
+  // Don't modify the recycling contest fallback, only add/modify for climate
+  const isClimate = contestId === '69e51153482488070228f2ce';
+
   const fallbackContestAr: ContestData = {
     id: contestId,
-    title: "♻️ إعادة تدوير المواد",
-    description: "انطلق مع السلحفاة لإنقاذ الكوكب من البلاستيك!",
-    zones: [
+    title: contestId === '69e51153482488070228f2cd' ? "🌱 التسميد وتدبير النفايات" : (isClimate ? "🌍 البيئة والمناخ" : "♻️ إعادة تدوير المواد"),
+    description: contestId === '69e51153482488070228f2cd' ? "اكتشف كيف تتحول النفايات العضوية إلى سماد" : (isClimate ? "مغامرة شاملة لحماية كوكبنا من التلوث والحرارة" : "انطلق مع السلحفاة لإنقاذ الكوكب من البلاستيك!"),
+    zones: isClimate ? [
+      { id: "69e51151482488070228f2c5", title: "فيديوهات تعليمية (سهل)", description: "شاهد وتعلم عن أساسيات كوكبنا", order: 1 },
+      { id: "69e51151482488070228f2c6", title: "أغاني وتحديات متوسطة", description: "استمتع بالأغاني وتعلم عن البحار", order: 2 },
+      { id: "69e51151482488070228f2c7", title: "حقائق وتحديات متقدمة", description: "اكتشف أسرار الطاقة والحقائق المدهشة", order: 3 },
+    ] : [
       { id: "69e51151482488070228f2ba", title: "تصنيف النفايات", description: "تعلّم كيفية فرز النفايات", order: 1 },
       { id: "69e51151482488070228f2bf", title: "المواد", description: "اكتشف أنواع المواد المختلفة", order: 2 },
       { id: "69e51151482488070228f2c4", title: "إنقاذ الكوكب", description: "ساعد في حماية البيئة", order: 3 },
@@ -97,9 +104,13 @@ export default function ContestPage() {
 
   const fallbackContestFr: ContestData = {
     id: contestId,
-    title: "♻️ Recyclage des matériaux",
-    description: "Pars avec la tortue pour sauver la planète du plastique !",
-    zones: [
+    title: contestId === '69e51153482488070228f2cd' ? "🌱 Compostage et gestion bio" : (isClimate ? "🌍 Environnement et Climat" : "♻️ Recyclage des matériaux"),
+    description: contestId === '69e51153482488070228f2cd' ? "Découvre comment les déchets organiques se transforment en compost" : (isClimate ? "Une aventure complète pour protéger notre planète de la pollution et de la chaleur" : "Pars avec la tortue pour sauver la planète du plastique !"),
+    zones: isClimate ? [
+      { id: "69e51151482488070228f2c5", title: "Vidéos Éducatives (Facile)", description: "Regarde et apprends les bases de notre planète", order: 1 },
+      { id: "69e51151482488070228f2c6", title: "Chansons et Défis Moyens", description: "Profite des chansons et apprends sur les mers", order: 2 },
+      { id: "69e51151482488070228f2c7", title: "Faits et Défis Avancés", description: "Découvre les secrets de l'énergie et des faits étonnants", order: 3 },
+    ] : [
       { id: "69e51151482488070228f2ba", title: "Tri des déchets", description: "Apprends à trier tes déchets", order: 1 },
       { id: "69e51151482488070228f2bf", title: "Les Matériaux", description: "Découvre les différents types de matériaux", order: 2 },
       { id: "69e51151482488070228f2c4", title: "Sauver la Planète", description: "Aide à protéger l'environnement", order: 3 },
@@ -107,6 +118,11 @@ export default function ContestPage() {
   };
 
   let displayContest = contest || (locale === 'ar' ? fallbackContestAr : fallbackContestFr);
+
+  // Always ensure zones are present for known contests if DB returns empty zones
+  if (displayContest && (!displayContest.zones || displayContest.zones.length === 0)) {
+    displayContest.zones = (locale === 'ar' ? fallbackContestAr : fallbackContestFr).zones;
+  }
 
   // Appliquer les traductions système si nécessaire
   if (!isAr && displayContest) {
@@ -260,18 +276,18 @@ export default function ContestPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="flex justify-center gap-6 mt-8 text-sm text-white/70"
+          className={`flex justify-center gap-8 mt-12 text-base font-bold text-white/80 ${isAr ? 'flex-row-reverse' : ''}`}
         >
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-success" />
+            <div className="w-5 h-5 rounded-full bg-success shadow-lg shadow-success/40" />
             <span>{t('status_completed')}</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-primary animate-pulse" />
+            <div className="w-5 h-5 rounded-full bg-primary shadow-lg shadow-primary/40 animate-pulse" />
             <span>{t('status_available')}</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-gray-400" />
+            <div className="w-5 h-5 rounded-full bg-gray-400 shadow-lg shadow-gray-400/40" />
             <span>{t('status_locked')}</span>
           </div>
         </motion.div>

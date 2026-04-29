@@ -13,10 +13,11 @@ interface ChallengeResult {
 }
 
 interface DragDropChallengeProps {
+  contestId?: string;
   onComplete: (result: ChallengeResult) => void;
 }
 
-const ITEMS_DATA = [
+const RECYCLING_ITEMS = [
   { id: "newspaper", ar: "جريدة", fr: "Journal", emoji: "📰" },
   { id: "cardboard", ar: "كرتون", fr: "Carton", emoji: "📦" },
   { id: "glass_jar", ar: "برطمان زجاجي", fr: "Bocal en verre", emoji: "🫙" },
@@ -25,21 +26,38 @@ const ITEMS_DATA = [
   { id: "shirt", ar: "قميص سليم", fr: "T-shirt propre", emoji: "👕" },
   { id: "toy", ar: "لعبة سليمة", fr: "Jouet en bon état", emoji: "🧸" },
   { id: "battery", ar: "بطارية", fr: "Pile", emoji: "🔋" },
-] as const;
+];
 
-const ZONES_DATA = [
+const CLIMATE_ITEMS = [
+  { id: "tree", ar: "زراعة شجرة", fr: "Planter un arbre", emoji: "🌳" },
+  { id: "light", ar: "ترك الضوء", fr: "Laisser la lumière", emoji: "💡" },
+  { id: "bike", ar: "ركوب الدراجة", fr: "Faire du vélo", emoji: "🚲" },
+  { id: "trash", ar: "رمي النفايات", fr: "Jeter des déchets", emoji: "🗑️" },
+  { id: "water", ar: "توفير الماء", fr: "Économiser l'eau", emoji: "💧" },
+  { id: "smoke", ar: "دخان أسود", fr: "Fumée noire", emoji: "💨" },
+  { id: "solar", ar: "لوح شمسي", fr: "Panneau solaire", emoji: "☀️" },
+  { id: "fire", ar: "حرق الغابة", fr: "Feu de forêt", emoji: "🔥" },
+];
+
+const RECYCLING_ZONES = [
   { id: "paper", ar: "ورق / كرتون", fr: "Papier / Carton", emoji: "📄", color: "bg-yellow-100 border-yellow-400" },
   { id: "glass", ar: "زجاج", fr: "Verre", emoji: "🫙", color: "bg-blue-100 border-blue-400" },
   { id: "plastic_metal", ar: "بلاستيك / معدن", fr: "Plastique / Métal", emoji: "🧴", color: "bg-orange-100 border-orange-400" },
   { id: "donate", ar: "للتبرع / إعادة الاستخدام", fr: "Don / Réutilisation", emoji: "🎁", color: "bg-pink-100 border-pink-400" },
   { id: "special", ar: "جمع خاص", fr: "Collecte spéciale", emoji: "🔋", color: "bg-red-100 border-red-400" },
-] as const;
+];
 
-type ItemId = (typeof ITEMS_DATA)[number]["id"];
-type ZoneId = (typeof ZONES_DATA)[number]["id"];
+const CLIMATE_ZONES = [
+  { id: "good", ar: "تصرف جيد ✅", fr: "Bon geste ✅", emoji: "😊", color: "bg-green-100 border-green-400" },
+  { id: "bad", ar: "تصرف سيئ ❌", fr: "Mauvais geste ❌", emoji: "😟", color: "bg-red-100 border-red-400" },
+];
 
-const CORRECT_ANSWERS: Record<ItemId, ZoneId> = {
+const RECYCLING_ANSWERS: Record<string, string> = {
   newspaper: "paper", cardboard: "paper", glass_jar: "glass", metal_can: "plastic_metal", plastic_bottle: "plastic_metal", shirt: "donate", toy: "donate", battery: "special",
+};
+
+const CLIMATE_ANSWERS: Record<string, string> = {
+  tree: "good", light: "bad", bike: "good", trash: "bad", water: "good", smoke: "bad", solar: "good", fire: "bad",
 };
 
 type ItemState = "idle" | "selected" | "placed" | "correct" | "incorrect";
@@ -53,12 +71,18 @@ const STATE_CLASSES: Record<ItemState, string> = {
 };
 
 export default function DragDropChallenge({
+  contestId,
   onComplete,
 }: DragDropChallengeProps) {
+  const isClimate = contestId === '69e51153482488070228f2ce';
+  const ITEMS_DATA = isClimate ? CLIMATE_ITEMS : RECYCLING_ITEMS;
+  const ZONES_DATA = isClimate ? CLIMATE_ZONES : RECYCLING_ZONES;
+  const CORRECT_ANSWERS = isClimate ? CLIMATE_ANSWERS : RECYCLING_ANSWERS;
+
   const { t, locale } = useLanguage();
   const isAr = locale === 'ar';
-  const [selectedItem, setSelectedItem] = useState<ItemId | null>(null);
-  const [placements, setPlacements] = useState<Partial<Record<ItemId, ZoneId>>>({});
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [placements, setPlacements] = useState<Partial<Record<string, string>>>({});
   const [verified, setVerified] = useState(false);
   const [score, setScore] = useState(0);
   const [errors, setErrors] = useState(0);
@@ -69,12 +93,12 @@ export default function DragDropChallenge({
   const placedCount = Object.keys(placements).length;
   const allPlaced = placedCount === ITEMS.length;
 
-  const handleItemClick = (itemId: ItemId) => {
+  const handleItemClick = (itemId: string) => {
     if (verified) return;
     setSelectedItem((prev) => (prev === itemId ? null : itemId));
   };
 
-  const handleZoneClick = (zoneId: ZoneId) => {
+  const handleZoneClick = (zoneId: string) => {
     if (verified || !selectedItem) return;
     setPlacements((prev) => ({ ...prev, [selectedItem]: zoneId }));
     setSelectedItem(null);
@@ -87,20 +111,20 @@ export default function DragDropChallenge({
       if (placements[item.id] === CORRECT_ANSWERS[item.id]) correctCount++;
       else errorCount++;
     });
-    const finalScore = correctCount * 2.5;
+    const finalScore = correctCount * (20 / ITEMS_DATA.length);
     setScore(finalScore);
     setErrors(errorCount);
     setVerified(true);
   };
 
-  const getItemState = (itemId: ItemId): ItemState => {
+  const getItemState = (itemId: string): ItemState => {
     if (verified) return placements[itemId] === CORRECT_ANSWERS[itemId] ? "correct" : "incorrect";
     if (selectedItem === itemId) return "selected";
     if (placements[itemId]) return "placed";
     return "idle";
   };
 
-  const getZoneItems = (zoneId: ZoneId) => ITEMS.filter((item) => placements[item.id] === zoneId);
+  const getZoneItems = (zoneId: string) => ITEMS.filter((item) => placements[item.id] === zoneId);
   const selectedItemData = ITEMS.find((i) => i.id === selectedItem);
 
   const turtleMood = verified ? (score >= 16 ? "happy" : "thinking") : "idle";
@@ -165,10 +189,10 @@ export default function DragDropChallenge({
 
       <div className="flex flex-wrap gap-2 sm:gap-3 mb-5">
         {ZONES.map((zone) => {
-          const placedItems = getZoneItems(zone.id as ZoneId);
+          const placedItems = getZoneItems(zone.id);
           const isDropTarget = !!selectedItem && !verified;
           return (
-            <motion.div key={zone.id} onClick={() => handleZoneClick(zone.id as ZoneId)} whileHover={isDropTarget ? { scale: 1.04, y: -2 } : {}} whileTap={isDropTarget ? { scale: 0.97 } : {}}
+            <motion.div key={zone.id} onClick={() => handleZoneClick(zone.id)} whileHover={isDropTarget ? { scale: 1.04, y: -2 } : {}} whileTap={isDropTarget ? { scale: 0.97 } : {}}
               className={`flex-1 min-w-[130px] border-2 rounded-kid p-3 min-h-[100px] transition-all duration-200 ${zone.color} ${isDropTarget ? "cursor-pointer shadow-kid ring-2 ring-primary/30" : "cursor-default"}`}
             >
               <div className="flex items-center gap-1.5 mb-2">

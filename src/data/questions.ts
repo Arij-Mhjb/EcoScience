@@ -1,6 +1,6 @@
 /* ─── Data ───────────────────────────────────────────────────────────────── */
 
-export const QUESTIONS_AR = [
+export const RECYCLING_QUESTIONS_AR = [
   {
     text: "إعادة التدوير تعني :",
     options: ["إخفاء النفاية", "تحويل النفاية لصنع شيء جديد", "رمي الأشياء في الطبيعة"],
@@ -129,7 +129,157 @@ export const QUESTIONS_AR = [
   },
 ];
 
-export const QUESTIONS_FR = [
+export const CLIMATE_QUESTIONS_AR = [
+  {
+    text: "البيئة هي :",
+    options: ["الطقس فقط", "كل ما يحيط بنا: هواء، ماء، نباتات، حيوانات، بشر", "الأشجار فقط"],
+    answer: 1,
+    points: 5,
+    tip: "البيئة تشمل كل ما يحيط بنا.",
+  },
+  {
+    text: "المناخ هو :",
+    options: ["الطقس اليوم فقط", "الطقس الملاحَظ على مدى طويل", "مطر واحد فقط"],
+    answer: 1,
+    points: 4,
+    tip: "المناخ يُدرَس على مدى طويل، وليس في يوم واحد.",
+  },
+  {
+    text: "تغير المناخ يعني :",
+    options: ["لا شيء يتغير", "المناخ يتغير تدريجياً مع الوقت", "الشمس تختفي"],
+    answer: 1,
+    points: 4,
+    tip: "هو تغيير دائم ومتراكم في المناخ.",
+  },
+  {
+    text: "حرارة شديدة لعدة أيام متتالية تُسمى :",
+    options: ["موجة حر", "رقاقة ثلج", "مذنب"],
+    answer: 0,
+    points: 4,
+    tip: "موجة الحر هي فترة من الحرارة الشديدة المتواصلة.",
+  },
+  {
+    text: "التصرف الصحيح لتوفير الماء هو :",
+    options: ["ترك الصنبور مفتوحاً", "إغلاق الصنبور أثناء تنظيف الأسنان", "اللعب بالماء على الأرض"],
+    answer: 1,
+    points: 4,
+    tip: "إغلاق الصنبور يمنع هدر الماء.",
+  },
+  {
+    text: "زراعة الأشجار مفيدة لأنها :",
+    options: ["توفر الظل وتُحسّن البيئة", "دائماً تُسخّن المدن", "تصنع البلاستيك"],
+    answer: 0,
+    points: 4,
+    tip: "الأشجار مفيدة للتبريد والتنوع البيولوجي.",
+  },
+  {
+    text: "رمي النفايات في الطبيعة :",
+    options: ["فكرة جيدة", "يمكن أن يُلوّث التربة والماء", "يُنمي الأزهار"],
+    answer: 1,
+    points: 4,
+    tip: "النفايات المتروكة تُلوّث البيئة.",
+  },
+  {
+    text: "دخان السيارات والمصانع :",
+    options: ["يمكن أن يُلوّث الهواء", "يجعل الهواء أنقى دائماً", "لا تأثير له"],
+    answer: 0,
+    points: 4,
+    tip: "تلوث الهواء يضر بالبيئة.",
+  },
+  {
+    text: "عند هطول مطر غزير في وقت قصير، قد يحدث :",
+    options: ["فيضان", "كسوف", "بركان"],
+    answer: 0,
+    points: 4,
+    tip: "الأمطار الغزيرة قد تسبب فيضانات.",
+  },
+  {
+    text: "إطفاء الضوء عند مغادرة الغرفة يسمح بـ :",
+    options: ["توفير الطاقة", "زيادة النفايات", "إتلاف الجدران"],
+    answer: 0,
+    points: 4,
+    tip: "نتجنب استهلاكاً غير ضروري للكهرباء.",
+  },
+  {
+    text: "للذهاب قرب المدرسة، الأفضل هو :",
+    options: ["المشي أو الدراجة", "ترك السيارة تعمل طويلاً", "حرق النفايات"],
+    answer: 0,
+    points: 4,
+    tip: "هذا يقلل من التلوث.",
+  },
+  {
+    text: "قارورة ماء قابلة لإعادة الاستخدام هي :",
+    options: ["أفضل من قارورة تُرمى كل يوم", "أسوأ للنفايات", "لا فائدة منها"],
+    answer: 0,
+    points: 4,
+    tip: "تقلل من النفايات البلاستيكية.",
+  },
+  {
+    text: "الجفاف هو :",
+    options: ["الكثير من الثلج", "نقص طويل في الأمطار", "انقطاع الكهرباء"],
+    answer: 1,
+    points: 4,
+    tip: "الجفاف يحدث عندما لا تسقط الأمطار لفترة طويلة.",
+  },
+  {
+    text: "الحيوانات والنباتات تتأثر إذا :",
+    options: ["تلوّثت بيئتها أو دُمِّرت", "حمينا موطنها", "وفّرنا الماء"],
+    answer: 0,
+    points: 4,
+    tip: "التلوث وتدمير البيئة يُهدّدانها.",
+  },
+  {
+    text: "مدرسة أكثر بيئية هي مدرسة :",
+    options: ["تفرز النفايات، وتوفر الماء والطاقة", "ترمي كل شيء على الأرض", "تترك كل الصنابير مفتوحة"],
+    answer: 0,
+    points: 4,
+    tip: "هذه تصرفات متسقة مع حماية البيئة.",
+  },
+  {
+    text: "إذا تسخّن الكوكب، يمكن أن نلاحظ :",
+    options: ["المزيد من الأحداث المناخية الشديدة", "كراريس تطير", "أشجاراً بلاستيكية طبيعية"],
+    answer: 0,
+    points: 4,
+    tip: "تغير المناخ يؤثر على بعض الأحداث المتطرفة.",
+  },
+  {
+    text: "التصرف الذي يحمي الطبيعة أكثر هو :",
+    options: ["ترك النفايات بعد نزهة", "جمع النفايات وفرزها وأخذها معك", "كسر النباتات"],
+    answer: 1,
+    points: 4,
+    tip: "هذا هو السلوك الصحيح في الهواء الطلق.",
+  },
+  {
+    text: "أفضل رسالة ختامية لهذه المسابقة هي :",
+    options: ["الطبيعة تحمي نفسها، لا نفعل شيئاً", "كل تصرف صغير مهم", "كلما أسرفنا، كان أفضل"],
+    answer: 1,
+    points: 4,
+    tip: "التوعية تبدأ بتصرفات بسيطة ومنتظمة.",
+  },
+  {
+    text: "ما الغاز الرئيسي المسؤول عن ظاهرة الاحتباس الحراري؟",
+    options: ["الأكسجين", "ثاني أكسيد الكربون (CO₂)", "النيتروجين"],
+    answer: 1,
+    points: 4,
+    tip: "ثاني أكسيد الكربون يحبس حرارة الشمس داخل الغلاف الجوي مما يرفع درجة حرارة الأرض.",
+  },
+  {
+    text: "ماذا يحدث للقطبين الشمالي والجنوبي عندما يرتفع متوسط حرارة الأرض؟",
+    options: ["يتجمدان أكثر", "تذوب الجليد وترتفع مستويات البحار", "لا يتغير شيء"],
+    answer: 1,
+    points: 4,
+    tip: "ذوبان الجليد في القطبين يرفع منسوب مياه البحار ويهدد المناطق الساحلية حول العالم.",
+  },
+  {
+    text: "ما المقصود بـ \"البصمة الكربونية\"؟",
+    options: ["بصمة إصبع مصنوعة من الفحم", "كمية غازات الدفيئة التي يُطلقها شخص أو نشاط ما في الجو", "لون الدخان الخارج من السيارة"],
+    answer: 1,
+    points: 4,
+    tip: "كلما قلّلنا من استخدام السيارات والكهرباء والبلاستيك، كلما صغرت بصمتنا الكربونية وساعدنا الكوكب.",
+  },
+];
+
+export const RECYCLING_QUESTIONS_FR = [
   {
     text: "Le recyclage signifie :",
     options: ["Cacher le déchet", "Transformer le déchet pour fabriquer du neuf", "Jeter dans la nature"],
@@ -258,4 +408,163 @@ export const QUESTIONS_FR = [
   },
 ];
 
-export const QUESTIONS = QUESTIONS_AR;
+export const CLIMATE_QUESTIONS_FR = [
+  {
+    text: "L'environnement est :",
+    options: ["Seulement la météo", "Tout ce qui nous entoure : air, eau, plantes, animaux, humains", "Seulement les arbres"],
+    answer: 1,
+    points: 4,
+    tip: "L'environnement inclut tout ce qui nous entoure.",
+  },
+  {
+    text: "Le climat est :",
+    options: ["La météo d'aujourd'hui seulement", "La météo observée sur le long terme", "Une seule pluie"],
+    answer: 1,
+    points: 4,
+    tip: "Le climat s'étudie sur le long terme, pas sur un seul jour.",
+  },
+  {
+    text: "Le changement climatique signifie :",
+    options: ["Rien ne change", "Le climat change progressivement avec le temps", "Le soleil disparaît"],
+    answer: 1,
+    points: 4,
+    tip: "C'est un changement permanent et accumulé du climat.",
+  },
+  {
+    text: "Une forte chaleur pendant plusieurs jours s'appelle :",
+    options: ["Une vague de chaleur", "Un flocon de neige", "Une comète"],
+    answer: 0,
+    points: 4,
+    tip: "Une vague de chaleur est une période de chaleur intense continue.",
+  },
+  {
+    text: "Le bon geste pour économiser l'eau est :",
+    options: ["Laisser le robinet ouvert", "Fermer le robinet pendant le brossage des dents", "Jouer avec l'eau par terre"],
+    answer: 1,
+    points: 4,
+    tip: "Fermer le robinet évite le gaspillage d'eau.",
+  },
+  {
+    text: "Planter des arbres est utile car :",
+    options: ["Ils donnent de l'ombre et améliorent l'environnement", "Ils chauffent toujours les villes", "Ils fabriquent du plastique"],
+    answer: 0,
+    points: 4,
+    tip: "Les arbres sont utiles pour le rafraîchissement et la biodiversité.",
+  },
+  {
+    text: "Jeter des déchets dans la nature :",
+    options: ["Est une bonne idée", "Peut polluer le sol et l'eau", "Fait pousser les fleurs"],
+    answer: 1,
+    points: 4,
+    tip: "Les déchets abandonnés polluent l'environnement.",
+  },
+  {
+    text: "La fumée des voitures et des usines :",
+    options: ["Peut polluer l'air", "Rend l'air toujours plus pur", "N'a aucun effet"],
+    answer: 0,
+    points: 4,
+    tip: "La pollution de l'air nuit à l'environnement.",
+  },
+  {
+    text: "Lors d'une forte pluie en peu de temps, il peut y avoir :",
+    options: ["Une inondation", "Une éclipse", "Un volcan"],
+    answer: 0,
+    points: 4,
+    tip: "Les fortes pluies peuvent causer des inondations.",
+  },
+  {
+    text: "Éteindre la lumière en quittant une pièce permet de :",
+    options: ["Économiser l'énergie", "Augmenter les déchets", "Abîmer les murs"],
+    answer: 0,
+    points: 4,
+    tip: "On évite une consommation inutile d'électricité.",
+  },
+  {
+    text: "Pour aller près de l'école, le mieux est :",
+    options: ["La marche ou le vélo", "Laisser la voiture tourner longtemps", "Brûler des déchets"],
+    answer: 0,
+    points: 4,
+    tip: "Cela réduit la pollution.",
+  },
+  {
+    text: "Une gourde réutilisable est :",
+    options: ["Meilleure qu'une bouteille jetable", "Pire pour les déchets", "Inutile"],
+    answer: 0,
+    points: 4,
+    tip: "Elle réduit les déchets plastiques.",
+  },
+  {
+    text: "La sécheresse est :",
+    options: ["Beaucoup de neige", "Un manque prolongé de pluie", "Une coupure d'électricité"],
+    answer: 1,
+    points: 4,
+    tip: "La sécheresse arrive quand il ne pleut pas pendant longtemps.",
+  },
+  {
+    text: "Les animaux et les plantes sont touchés si :",
+    options: ["Leur environnement est pollué ou détruit", "On protège leur habitat", "On économise l'eau"],
+    answer: 0,
+    points: 4,
+    tip: "La pollution et la destruction de l'environnement les menacent.",
+  },
+  {
+    text: "Une école plus écologique est une école qui :",
+    options: ["Trie les déchets et économise l'eau/énergie", "Jette tout par terre", "Laisse les robinets ouverts"],
+    answer: 0,
+    points: 4,
+    tip: "Ce sont des comportements cohérents avec la protection de l'environnement.",
+  },
+  {
+    text: "Si la planète chauffe, on peut observer :",
+    options: ["Plus d'événements climatiques extrêmes", "Des cahiers qui volent", "Des arbres en plastique naturel"],
+    answer: 0,
+    points: 4,
+    tip: "Le changement climatique affecte certains événements extrêmes.",
+  },
+  {
+    text: "Le geste qui protège le plus la nature est :",
+    options: ["Laisser ses déchets après un pique-nique", "Ramasser, trier et emporter ses déchets", "Casser les plantes"],
+    answer: 1,
+    points: 4,
+    tip: "C'est le bon comportement en plein air.",
+  },
+  {
+    text: "Le meilleur message de fin pour ce concours est :",
+    options: ["La nature se protège seule", "Chaque petit geste compte", "Plus on gaspille, mieux c'est"],
+    answer: 1,
+    points: 4,
+    tip: "La sensibilisation commence par des gestes simples et réguliers.",
+  },
+  {
+    text: "Quel est le principal gaz responsable de l'effet de serre ?",
+    options: ["L'oxygène", "Le dioxyde de carbone (CO₂)", "L'azote"],
+    answer: 1,
+    points: 4,
+    tip: "Le CO₂ retient la chaleur du soleil dans l'atmosphère, ce qui augmente la température de la Terre.",
+  },
+  {
+    text: "Qu'arrive-t-il aux pôles Nord et Sud quand la température moyenne de la Terre augmente ?",
+    options: ["Ils gèlent plus", "La glace fond et le niveau de la mer monte", "Rien ne change"],
+    answer: 1,
+    points: 4,
+    tip: "La fonte des glaces aux pôles fait monter le niveau des mers et menace les zones côtières.",
+  },
+  {
+    text: "Qu'est-ce que l'empreinte carbone ?",
+    options: ["Une empreinte digitale faite de charbon", "La quantité de gaz à effet de serre émise par une personne ou une activité", "La couleur de la fumée qui sort d'une voiture"],
+    answer: 1,
+    points: 4,
+    tip: "Plus nous réduisons l'utilisation des voitures, de l'électricité et du plastique, plus notre empreinte carbone diminue.",
+  },
+];
+
+export const QUESTIONS = RECYCLING_QUESTIONS_AR; // Fallback
+
+export function getQuestions(contestId: string, locale: string) {
+  const isAr = locale === 'ar';
+  if (contestId === '69e51153482488070228f2ce') {
+    return isAr ? CLIMATE_QUESTIONS_AR : CLIMATE_QUESTIONS_FR;
+  }
+  // Default to recycling
+  return isAr ? RECYCLING_QUESTIONS_AR : RECYCLING_QUESTIONS_FR;
+}

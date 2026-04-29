@@ -7,22 +7,32 @@ import { useLanguage } from "@/context/LanguageContext";
 
 /* ─── Interfaces ─────────────────────────────────────────────────────────── */
 interface FlashQuestionProps {
+  contestId?: string;
   onComplete: () => void;
 }
 
 /* ─── Timing ───────────────────────────────────────────────────────────── */
 const FEEDBACK_DELAY = 2500;
 
-export default function FlashQuestion({ onComplete }: FlashQuestionProps) {
+export default function FlashQuestion({ onComplete, contestId }: FlashQuestionProps) {
   const { locale } = useLanguage();
   const isAr = locale === 'ar';
   
   const [selected, setSelected] = useState<number | null>(null);
 
-  const QUESTION = isAr ? "حصلت الزجاجة على حياة جديدة لأنها :" : "La bouteille a eu une nouvelle vie parce qu'elle :";
-  const OPTIONS = isAr 
-    ? ["فُرزت بشكل صحيح ✅", "أُخفيت", "دُفنت في الفناء"]
-    : ["A été triée correctement ✅", "A été cachée", "A été enterrée"];
+  const isClimateChange = contestId === '69e51153482488070228f2ce';
+
+  const QUESTION = isClimateChange
+    ? (isAr ? "ما الذي يُساعد الكوكب؟" : "Qu'est-ce qui aide la planète ?")
+    : (isAr ? "حصلت الزجاجة على حياة جديدة لأنها :" : "La bouteille a eu une nouvelle vie parce qu'elle :");
+
+  const OPTIONS = isClimateChange
+    ? (isAr 
+        ? ["زراعة الأشجار ✅", "رمي النفايات", "تبذير الماء"]
+        : ["Planter des arbres ✅", "Jeter des déchets", "Gaspiller l'eau"])
+    : (isAr 
+        ? ["فُرزت بشكل صحيح ✅", "أُخفيت", "دُفنت في الفناء"]
+        : ["A été triée correctement ✅", "A été cachée", "A été enterrée"]);
     
   const CORRECT_INDEX = 0;
   const LABELS = isAr ? ["أ", "ب", "ج"] : ["A", "B", "C"];
@@ -44,8 +54,12 @@ export default function FlashQuestion({ onComplete }: FlashQuestionProps) {
   const turtleMood = !answered ? "thinking" : isCorrect ? "happy" : "sad";
 
   const turtleMessage = isAr
-    ? (!answered ? "فكّر جيداً... ماذا حدث للزجاجة؟ 🤔" : isCorrect ? "ممتاز! هذا هو الجواب الصحيح 🎉" : "لا بأس! الجواب الصحيح هو أ 💪")
-    : (!answered ? "Réfléchis bien... Qu'est-il arrivé à la bouteille ? 🤔" : isCorrect ? "Excellent ! C'est la bonne réponse 🎉" : "Pas grave ! La bonne réponse était la A 💪");
+    ? (!answered 
+        ? (isClimateChange ? "سؤال سريع... كيف نحمي الأرض؟ 🤔" : "فكّر جيداً... ماذا حدث للزجاجة؟ 🤔")
+        : (isClimateChange ? "💡 هل تعلم؟ زراعة الأشجار تساعد الكوكب على التنفس!" : "💡 هل تعلم؟ فرز النفايات يساعد في إعادة تدويرها!"))
+    : (!answered 
+        ? (isClimateChange ? "Question rapide... Comment protéger la Terre ? 🤔" : "Réfléchis bien... Qu'est-il arrivé à la bouteille ? 🤔")
+        : (isClimateChange ? "💡 Le savais-tu ? Planter des arbres aide la planète à respirer !" : "💡 Le savais-tu ? Trier les déchets aide au recyclage !"));
 
   const getOptionClass = (i: number): string => {
     const base = `w-full p-4 rounded-kid font-semibold text-lg transition-all duration-300 flex items-center gap-3 border-2 outline-none ${isAr ? 'text-right' : 'text-left'} `;
@@ -127,3 +141,4 @@ export default function FlashQuestion({ onComplete }: FlashQuestionProps) {
     </div>
   );
 }
+

@@ -9,9 +9,10 @@ import Image from "next/image";
 import OpeningAnimation from "@/components/OpeningAnimation";
 import FlashQuestion from "@/components/FlashQuestion";
 import ContestQuiz from "@/components/ContestQuiz";
-import { QUESTIONS } from "@/data/questions";
+import { getQuestions } from "@/data/questions";
 import DragDropChallenge from "@/components/DragDropChallenge";
 import MatchingChallenge from "@/components/MatchingChallenge";
+import SpotTheErrorChallenge from "@/components/SpotTheErrorChallenge";
 import ContestResults from "@/components/ContestResults";
 import Turtle from "@/components/Turtle";
 import { useLanguage } from "@/context/LanguageContext";
@@ -21,6 +22,7 @@ interface QuizAnswer {
   selectedAnswer: number;
   correct: boolean;
   points: number;
+  questionText?: string;
 }
 
 type ContestStep =
@@ -29,6 +31,7 @@ type ContestStep =
   | "quiz"
   | "challenge1"
   | "challenge2"
+  | "challenge3"
   | "results";
 
 function formatTime(seconds: number): string {
@@ -37,7 +40,7 @@ function formatTime(seconds: number): string {
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-const TIMER_STEPS: ContestStep[] = ["quiz", "challenge1", "challenge2"];
+const TIMER_STEPS: ContestStep[] = ["quiz", "challenge1", "challenge2", "challenge3"];
 
 const slideVariants = {
   enter: (direction: number) => ({ opacity: 0, x: direction > 0 ? 60 : -60 }),
@@ -58,6 +61,7 @@ export default function PlayPage() {
   const { t, locale } = useLanguage();
   const isAr = locale === 'ar';
   const contestId = params.id as string;
+  const contestQuestions = getQuestions(contestId, locale);
 
   const [step, setStep] = useState<ContestStep>("animation");
 
@@ -70,6 +74,8 @@ export default function PlayPage() {
   const [challenge1Errors, setChallenge1Errors] = useState(0);
   const [challenge2Score, setChallenge2Score] = useState(0);
   const [challenge2Errors, setChallenge2Errors] = useState(0);
+  const [challenge3Score, setChallenge3Score] = useState(0);
+  const [challenge3Errors, setChallenge3Errors] = useState(0);
 
   const [initialQuizAnswers, setInitialQuizAnswers] = useState<QuizAnswer[]>([]);
 
@@ -107,23 +113,21 @@ export default function PlayPage() {
                 const qAns = p.quizAnswers || {};
                 let reconstructed: QuizAnswer[] = [];
                 
-                // On utilise QUESTIONS_AR par défaut pour la structure (points/réponses)
-                // car les deux listes ont la même structure.
                 if (Array.isArray(qAns)) {
                   reconstructed = qAns;
                 } else if (typeof qAns === 'object' && qAns !== null) {
                   Object.entries(qAns).forEach(([qIdx, val]) => {
                     const idx = parseInt(qIdx, 10);
-                    const q = QUESTIONS[idx];
+                    const q = contestQuestions[idx];
                     if (q) {
                       const ansIdx = (typeof val === 'object' && val !== null) ? (val as any).answer : val;
                       const correct = (q.answer === ansIdx);
                       reconstructed.push({
                         questionIndex: idx,
-                        questionText: (typeof val === 'object' && val !== null) ? (val as any).questionText : q.text,
                         selectedAnswer: ansIdx as number,
                         correct,
-                        points: correct ? q.points : 0
+                        points: correct ? q.points : 0,
+                        questionText: (typeof val === 'object' && val !== null) ? (val as any).questionText : q.text,
                       });
                     }
                   });
@@ -133,12 +137,9 @@ export default function PlayPage() {
 
                 if (p.lastStep) {
                   let restoredStep = p.lastStep as ContestStep;
-                  
-                  // Si on est bloqué au quiz mais qu'il est déjà fini, on passe au défi 1
-                  if (restoredStep === "quiz" && reconstructed.length >= QUESTIONS.length) {
+                  if (restoredStep === "quiz" && reconstructed.length >= contestQuestions.length) {
                     restoredStep = "challenge1";
                   }
-                  
                   setStep(restoredStep);
                   if (TIMER_STEPS.includes(restoredStep)) {
                     setTimerActive(true);
@@ -180,22 +181,22 @@ export default function PlayPage() {
     }).catch(console.error);
   }, [contestId, globalTimer]);
 
-  const totalScore = quizScore + challenge1Score + challenge2Score;
-  const totalErrors = quizErrors + challenge1Errors + challenge2Errors;
+  const totalScoreNow = quizScore + challenge1Score + challenge2Score + challenge3Score;
+  const totalErrorsNow = quizErrors + challenge1Errors + challenge2Errors + challenge3Errors;
 
-  // Sauvegarder l'étape quand elle change
   useEffect(() => {
     if (step === "animation" || step === "results" || initLoading) return;
     
     const challengeData: any = {};
     if (step === "challenge1") {
-      challengeData.questionId = 18;
-      challengeData.questionText = locale === 'ar' ? "تحدي: فرز النفايات" : "Défi : Tri des déchets";
-      challengeData.answer = true;
+      challengeData.questionId = 101;
+      challengeData.questionText = locale === 'ar' ? "تحدي 1" : "Défi 1";
     } else if (step === "challenge2") {
-      challengeData.questionId = 19;
-      challengeData.questionText = locale === 'ar' ? "تحدي: التعرف على المواد" : "Défi : Reconnaissance";
-      challengeData.answer = true;
+      challengeData.questionId = 102;
+      challengeData.questionText = locale === 'ar' ? "تحدي 2" : "Défi 2";
+    } else if (step === "challenge3") {
+      challengeData.questionId = 103;
+      challengeData.questionText = locale === 'ar' ? "تحدي 3" : "Défi 3";
     }
 
     fetch(`/api/contest/${contestId}/progress`, {
@@ -205,13 +206,12 @@ export default function PlayPage() {
         lastStep: step,
         timeSpent: globalTimer,
         ...challengeData,
-        ...(totalScore > 0 ? { score: totalScore } : {}),
-        ...(totalErrors > 0 ? { errors: totalErrors } : {}),
+        score: totalScoreNow,
+        errors: totalErrorsNow,
       }),
     }).catch(console.error);
-  }, [step, contestId, initLoading]); // Retiré globalTimer, totalScore, totalErrors pour éviter le spam
+  }, [step, contestId, initLoading]);
 
-  // Sauvegarder le temps toutes les 10 secondes
   useEffect(() => {
     if (!timerActive || step === "results" || initLoading) return;
     
@@ -232,19 +232,22 @@ export default function PlayPage() {
 
   const getStepLabel = (step: ContestStep): string | null => {
     const isAr = locale === 'ar';
+    const total = contestId === '69e51153482488070228f2ce' ? 5 : 4;
     const stepTxt = isAr ? 'الخطوة' : 'Étape';
     const ofTxt = isAr ? 'من' : 'sur';
     
     switch (step) {
       case "animation":
       case "flash":
-        return `${stepTxt} 1 ${ofTxt} 4`;
+        return `${stepTxt} 1 ${ofTxt} ${total}`;
       case "quiz":
-        return `${stepTxt} 2 ${ofTxt} 4`;
+        return `${stepTxt} 2 ${ofTxt} ${total}`;
       case "challenge1":
-        return `${stepTxt} 3 ${ofTxt} 4`;
+        return `${stepTxt} 3 ${ofTxt} ${total}`;
       case "challenge2":
-        return `${stepTxt} 4 ${ofTxt} 4`;
+        return `${stepTxt} 4 ${ofTxt} ${total}`;
+      case "challenge3":
+        return `${stepTxt} 5 ${ofTxt} 5`;
       case "results":
         return null;
     }
@@ -280,7 +283,7 @@ export default function PlayPage() {
             <div className="flex-shrink-0">
               <Image
                 src="/images/ecoscience-text-logo.png"
-                alt="InNOScEnce"
+                alt="EcoScience"
                 width={96}
                 height={38}
                 className="object-contain"
@@ -337,52 +340,22 @@ export default function PlayPage() {
       <main className="flex-1 relative">
         <AnimatePresence mode="wait" custom={locale === 'ar' ? 1 : -1}>
           {step === "animation" && (
-            <motion.div
-              key="animation"
-              variants={fadeVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.38, ease: "easeInOut" }}
-              className="w-full"
-            >
-              <OpeningAnimation onComplete={() => setStep("flash")} />
+            <motion.div key="animation" variants={fadeVariants} initial="enter" animate="center" exit="exit" className="w-full">
+              <OpeningAnimation contestId={contestId} onComplete={() => setStep("flash")} />
             </motion.div>
           )}
 
           {step === "flash" && (
-            <motion.div
-              key="flash"
-              variants={slideVariants}
-              custom={locale === 'ar' ? 1 : -1}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.38, ease: "easeOut" }}
-              className="w-full"
-            >
-              <FlashQuestion
-                onComplete={() => {
-                  setTimerActive(true);
-                  setStep("quiz");
-                }}
-              />
+            <motion.div key="flash" variants={slideVariants} custom={isAr ? 1 : -1} initial="enter" animate="center" exit="exit" className="w-full">
+              <FlashQuestion contestId={contestId} onComplete={() => { setTimerActive(true); setStep("quiz"); }} />
             </motion.div>
           )}
 
           {step === "quiz" && (
-            <motion.div
-              key="quiz"
-              variants={slideVariants}
-              custom={locale === 'ar' ? 1 : -1}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.38, ease: "easeOut" }}
-              className="w-full"
-            >
+            <motion.div key="quiz" variants={slideVariants} custom={isAr ? 1 : -1} initial="enter" animate="center" exit="exit" className="w-full">
               <ContestQuiz
                 timeSpent={globalTimer}
+                questions={contestQuestions}
                 initialAnswers={initialQuizAnswers}
                 onProgress={handleQuizProgress}
                 onComplete={(result) => {
@@ -395,35 +368,12 @@ export default function PlayPage() {
           )}
 
           {step === "challenge1" && (
-            <motion.div
-              key="challenge1"
-              variants={slideVariants}
-              custom={locale === 'ar' ? 1 : -1}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.38, ease: "easeOut" }}
-              className="w-full"
-            >
+            <motion.div key="challenge1" variants={slideVariants} custom={isAr ? 1 : -1} initial="enter" animate="center" exit="exit" className="w-full">
               <DragDropChallenge
+                contestId={contestId}
                 onComplete={(r) => {
-                  const newScore = quizScore + r.score;
-                  const newErrors = quizErrors + r.errors;
                   setChallenge1Score(r.score);
                   setChallenge1Errors(r.errors);
-                  
-                  // Sauvegarder immédiatement
-                  fetch(`/api/contest/${contestId}/progress`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      score: newScore,
-                      errors: newErrors,
-                      lastStep: "challenge2",
-                      timeSpent: globalTimer,
-                    }),
-                  }).catch(console.error);
-                  
                   setStep("challenge2");
                 }}
               />
@@ -431,36 +381,30 @@ export default function PlayPage() {
           )}
 
           {step === "challenge2" && (
-            <motion.div
-              key="challenge2"
-              variants={slideVariants}
-              custom={locale === 'ar' ? 1 : -1}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.38, ease: "easeOut" }}
-              className="w-full"
-            >
+            <motion.div key="challenge2" variants={slideVariants} custom={isAr ? 1 : -1} initial="enter" animate="center" exit="exit" className="w-full">
               <MatchingChallenge
+                contestId={contestId}
                 onComplete={(r) => {
-                  const finalScore = quizScore + challenge1Score + r.score;
-                  const finalErrors = quizErrors + challenge1Errors + r.errors;
                   setChallenge2Score(r.score);
                   setChallenge2Errors(r.errors);
+                  if (contestId === '69e51153482488070228f2ce') {
+                    setStep("challenge3");
+                  } else {
+                    setTimerActive(false);
+                    setStep("results");
+                  }
+                }}
+              />
+            </motion.div>
+          )}
+
+          {step === "challenge3" && (
+            <motion.div key="challenge3" variants={slideVariants} custom={isAr ? 1 : -1} initial="enter" animate="center" exit="exit" className="w-full">
+              <SpotTheErrorChallenge
+                onComplete={(r) => {
+                  setChallenge3Score(r.score);
+                  setChallenge3Errors(r.errors);
                   setTimerActive(false);
-
-                  // Sauvegarder immédiatement le résultat final avant de passer aux résultats
-                  fetch(`/api/contest/${contestId}/progress`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      score: finalScore,
-                      errors: finalErrors,
-                      lastStep: "results",
-                      timeSpent: globalTimer,
-                    }),
-                  }).catch(console.error);
-
                   setStep("results");
                 }}
               />
@@ -468,22 +412,14 @@ export default function PlayPage() {
           )}
 
           {step === "results" && (
-            <motion.div
-              key="results"
-              variants={fadeVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="w-full"
-            >
+            <div className="fixed inset-0 z-[100] overflow-y-auto bg-ocean-gradient">
               <ContestResults
-                totalScore={totalScore}
-                timeSpent={globalTimer}
-                totalErrors={totalErrors}
                 contestId={contestId}
+                totalScore={Math.min(100, Math.round(quizScore + challenge1Score + challenge2Score + challenge3Score))}
+                timeSpent={globalTimer}
+                totalErrors={quizErrors + challenge1Errors + challenge2Errors + challenge3Errors}
               />
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
       </main>

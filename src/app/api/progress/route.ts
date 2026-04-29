@@ -60,7 +60,22 @@ export async function POST(request: Request) {
     // Mettre à jour la participation si contestId fourni
     if (contestId) {
       const participation = await prisma.participation.findFirst({ where: { userId, contestId } });
-      if (participation && !participation.completedZones.includes(zoneId)) {
+      
+      if (!participation) {
+        // Créer si inexistant
+        await prisma.participation.create({
+          data: {
+            userId,
+            contestId,
+            completedZones: [zoneId],
+            status: 'in_progress',
+            score: 0,
+            timeSpent: 0,
+            errors: 0
+          }
+        });
+      } else if (!participation.completedZones.includes(zoneId)) {
+        // Mettre à jour si existant
         await prisma.participation.update({
           where: { id: participation.id },
           data: {
