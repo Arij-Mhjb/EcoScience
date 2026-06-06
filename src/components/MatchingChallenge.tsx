@@ -45,8 +45,23 @@ const CLIMATE_RIGHT = [
   { id: "R4", ar: "هواء نقي", fr: "Air pur", emoji: "✨🌬️" },
 ];
 
+const COMPOSTING_LEFT = [
+  { id: "L1", ar: "قشور الفواكه", fr: "Épluchures de fruits", emoji: "🍊" },
+  { id: "L2", ar: "بقايا الطعام", fr: "Restes alimentaires", emoji: "🥦" },
+  { id: "L3", ar: "أوراق الشجر", fr: "Feuilles mortes", emoji: "🍂" },
+  { id: "L4", ar: "قهوة مستعملة", fr: "Marc de café", emoji: "☕" },
+];
+
+const COMPOSTING_RIGHT = [
+  { id: "R2", ar: "سماد يُغذّي التربة", fr: "Compost qui nourrit le sol", emoji: "🌱" },
+  { id: "R4", ar: "يُسرّع التحلل", fr: "Accélère la décomposition", emoji: "⚡🌱" },
+  { id: "R1", ar: "يُحسّن بنية التربة", fr: "Améliore la structure du sol", emoji: "🪴" },
+  { id: "R3", ar: "يُعطي العناصر المغذية", fr: "Apporte des nutriments", emoji: "✨🌿" },
+];
+
 const RECYCLING_ANSWERS: Record<string, string> = { L1: "R1", L2: "R2", L3: "R3", L4: "R4" };
 const CLIMATE_ANSWERS: Record<string, string> = { L1: "R1", L2: "R2", L3: "R3", L4: "R4" };
+const COMPOSTING_ANSWERS: Record<string, string> = { L1: "R1", L2: "R2", L3: "R3", L4: "R4" };
 
 const PAIR_COLORS = [
   "bg-blue-100 border-blue-400", "bg-green-100 border-green-400", "bg-orange-100 border-orange-400", "bg-pink-100 border-pink-400",
@@ -56,10 +71,11 @@ export default function MatchingChallenge({
   contestId,
   onComplete,
 }: MatchingChallengeProps) {
+  const isComposting = contestId === '69e51153482488070228f2cd';
   const isClimate = contestId === '69e51153482488070228f2ce';
-  const LEFT_DATA = isClimate ? CLIMATE_LEFT : RECYCLING_LEFT;
-  const RIGHT_DATA = isClimate ? CLIMATE_RIGHT : RECYCLING_RIGHT;
-  const CORRECT_PAIRS = isClimate ? CLIMATE_ANSWERS : RECYCLING_ANSWERS;
+  const LEFT_DATA = isClimate ? CLIMATE_LEFT : isComposting ? COMPOSTING_LEFT : RECYCLING_LEFT;
+  const RIGHT_DATA = isClimate ? CLIMATE_RIGHT : isComposting ? COMPOSTING_RIGHT : RECYCLING_RIGHT;
+  const CORRECT_PAIRS = isClimate ? CLIMATE_ANSWERS : isComposting ? COMPOSTING_ANSWERS : RECYCLING_ANSWERS;
 
   const { t, locale } = useLanguage();
   const isAr = locale === 'ar';

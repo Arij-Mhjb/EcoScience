@@ -21,16 +21,23 @@ export default function FlashQuestion({ onComplete, contestId }: FlashQuestionPr
   const [selected, setSelected] = useState<number | null>(null);
 
   const isClimateChange = contestId === '69e51153482488070228f2ce';
+  const isComposting = contestId === '69e51153482488070228f2cd';
 
   const QUESTION = isClimateChange
     ? (isAr ? "ما الذي يُساعد الكوكب؟" : "Qu'est-ce qui aide la planète ?")
+    : isComposting
+    ? (isAr ? "ماذا يحدث لبقايا الطعام في صندوق التسميد؟" : "Que se passe-t-il avec les restes alimentaires dans un composteur ?")
     : (isAr ? "حصلت الزجاجة على حياة جديدة لأنها :" : "La bouteille a eu une nouvelle vie parce qu'elle :");
 
   const OPTIONS = isClimateChange
-    ? (isAr 
+    ? (isAr
         ? ["زراعة الأشجار ✅", "رمي النفايات", "تبذير الماء"]
         : ["Planter des arbres ✅", "Jeter des déchets", "Gaspiller l'eau"])
-    : (isAr 
+    : isComposting
+    ? (isAr
+        ? ["تتحلل وتصبح سماداً طبيعياً مفيداً ✅", "تتحول إلى بلاستيك", "تختفي فوراً"]
+        : ["Elles se décomposent et deviennent du compost utile ✅", "Elles se transforment en plastique", "Elles disparaissent immédiatement"])
+    : (isAr
         ? ["فُرزت بشكل صحيح ✅", "أُخفيت", "دُفنت في الفناء"]
         : ["A été triée correctement ✅", "A été cachée", "A été enterrée"]);
     
@@ -54,12 +61,12 @@ export default function FlashQuestion({ onComplete, contestId }: FlashQuestionPr
   const turtleMood = !answered ? "thinking" : isCorrect ? "happy" : "sad";
 
   const turtleMessage = isAr
-    ? (!answered 
-        ? (isClimateChange ? "سؤال سريع... كيف نحمي الأرض؟ 🤔" : "فكّر جيداً... ماذا حدث للزجاجة؟ 🤔")
-        : (isClimateChange ? "💡 هل تعلم؟ زراعة الأشجار تساعد الكوكب على التنفس!" : "💡 هل تعلم؟ فرز النفايات يساعد في إعادة تدويرها!"))
-    : (!answered 
-        ? (isClimateChange ? "Question rapide... Comment protéger la Terre ? 🤔" : "Réfléchis bien... Qu'est-il arrivé à la bouteille ? 🤔")
-        : (isClimateChange ? "💡 Le savais-tu ? Planter des arbres aide la planète à respirer !" : "💡 Le savais-tu ? Trier les déchets aide au recyclage !"));
+    ? (!answered
+        ? (isClimateChange ? "سؤال سريع... كيف نحمي الأرض؟ 🤔" : isComposting ? "سؤال سريع... ماذا يحدث للبقايا العضوية؟ 🤔" : "فكّر جيداً... ماذا حدث للزجاجة؟ 🤔")
+        : (isClimateChange ? "💡 هل تعلم؟ زراعة الأشجار تساعد الكوكب على التنفس!" : isComposting ? "💡 هل تعلم؟ التسميد يحوّل النفايات إلى سماد طبيعي مفيد!" : "💡 هل تعلم؟ فرز النفايات يساعد في إعادة تدويرها!"))
+    : (!answered
+        ? (isClimateChange ? "Question rapide... Comment protéger la Terre ? 🤔" : isComposting ? "Question rapide... Que deviennent les restes organiques ? 🤔" : "Réfléchis bien... Qu'est-il arrivé à la bouteille ? 🤔")
+        : (isClimateChange ? "💡 Le savais-tu ? Planter des arbres aide la planète à respirer !" : isComposting ? "💡 Le savais-tu ? Le compostage transforme les déchets en engrais naturel !" : "💡 Le savais-tu ? Trier les déchets aide au recyclage !"));
 
   const getOptionClass = (i: number): string => {
     const base = `w-full p-4 rounded-kid font-semibold text-lg transition-all duration-300 flex items-center gap-3 border-2 outline-none ${isAr ? 'text-right' : 'text-left'} `;

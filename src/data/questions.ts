@@ -560,10 +560,55 @@ export const CLIMATE_QUESTIONS_FR = [
 
 export const QUESTIONS = RECYCLING_QUESTIONS_AR; // Fallback
 
+export const COMPOSTING_QUESTIONS_AR = [
+  { text: "التسميد هو :", options: ["حرق النفايات العضوية", "تحويل بقايا الطعام والنباتات إلى سماد طبيعي", "دفن البلاستيك في التربة"], answer: 1, points: 3, tip: "التسميد يحوّل النفايات العضوية إلى مادة مغذية للتربة بدلاً من رميها." },
+  { text: "أيّ من هذه المواد يمكن تسميدها؟", options: ["قشور الموز والخضروات", "علبة البلاستيك", "الزجاج المكسور"], answer: 0, points: 3, tip: "النفايات العضوية مثل قشور الفواكه والخضروات تتحلل بسهولة وتصلح للتسميد." },
+  { text: "ما الفرق بين النفايات العضوية والنفايات الجامدة؟", options: ["لا فرق بينهما", "العضوية تأتي من الطبيعة وتتحلل، الجامدة مثل البلاستيك لا تتحلل بسرعة", "الجامدة أفضل للتسميد"], answer: 1, points: 3, tip: "النفايات العضوية تأتي من الكائنات الحية وتتحلل طبيعياً، عكس البلاستيك والمعادن." },
+  { text: "كم من الوقت تحتاج النفايات العضوية لتتحول إلى سماد جيد؟", options: ["يوم واحد", "بين شهر وثلاثة أشهر تقريباً", "عشر سنوات"], answer: 1, points: 3, tip: "التسميد يحتاج وقتاً وشروطاً مناسبة من رطوبة وهواء ودرجة حرارة." },
+  { text: "صح أم خطأ: بقايا اللحوم يجب وضعها في صندوق التسميد المنزلي.", options: ["صح", "خطأ"], answer: 1, points: 3, tip: "بقايا اللحوم قد تجذب الحشرات والقوارض، لذا لا تُضاف عادةً للتسميد المنزلي." },
+  { text: "ما دور الديدان في التسميد؟", options: ["لا دور لها", "تساعد على تحليل المواد العضوية وتسريع التسميد", "تُتلف السماد"], answer: 1, points: 3, tip: "الديدان كائنات مفيدة جداً في تحليل النفايات العضوية وتحويلها لسماد غني." },
+  { text: "السماد العضوي الناتج عن التسميد يُستخدم لـ:", options: ["إطعام السيارات", "تغذية التربة وتحسينها لزراعة النباتات", "صناعة البلاستيك"], answer: 1, points: 3, tip: "السماد العضوي يُغني التربة بالمعادن والعناصر الغذائية المفيدة للنباتات." },
+  { text: "أيّ من هذه المواد لا تصلح للتسميد؟", options: ["أوراق الشجر الجافة", "المناديل الورقية المستعملة", "البطاريات المستعملة"], answer: 2, points: 3, tip: "البطاريات مواد خطرة لا تتحلل وتُلوّث التربة، يجب جمعها في نقاط تجميع خاصة." },
+  { text: "إذا كان لديك صندوق تسميد، ماذا تضيف إليه لتسريع العملية؟", options: ["الماء الساخن فقط", "تقليب المحتوى بانتظام وإضافة مواد متنوعة", "إغلاقه تماماً دون فتح"], answer: 1, points: 3, tip: "التقليب يدخل الهواء ويُسرّع عملية التحلل البيولوجي." },
+  { text: "ما الفائدة البيئية الرئيسية للتسميد؟", options: ["زيادة كمية النفايات", "تقليل النفايات المرسلة للمكبّات وإثراء التربة", "إنتاج المزيد من البلاستيك"], answer: 1, points: 3, tip: "التسميد يُقلّل من الضغط على مكبّات النفايات ويعيد العناصر الغذائية للطبيعة." },
+  { text: "قشور البيض تصلح للتسميد لأنها :", options: ["تُوفر الكالسيوم للتربة", "تصنع البلاستيك", "لا تتحلل أبداً"], answer: 0, points: 4, tip: "قشور البيض غنية بالكالسيوم وتتحلل ببطء لكنها تُفيد التربة كثيراً." },
+  { text: "أيّ نوع من التسميد يستخدم الديدان بشكل مركّز؟", options: ["التسميد الهوائي", "الفرم الدودي (Vermicompostage)", "التسميد الصناعي بالحرارة"], answer: 1, points: 4, tip: "الفرم الدودي هو نظام تسميد يعتمد على ديدان خاصة تُسمّى ديدان الكمبوست." },
+  { text: "ما الذي يجب تجنّب إضافته للسماد لحماية صحة التربة؟", options: ["قهوة مستعملة", "نباتات مريضة أو مصابة", "تفل الشاي"], answer: 1, points: 4, tip: "النباتات المريضة تحمل مسبّبات أمراض قد تنتقل إلى التربة والنباتات الجديدة." },
+  { text: "التسميد الجماعي في الأحياء يعني :", options: ["رمي الجميع نفاياتهم في نفس المكان", "مشاركة مجموعة من الجيران في إدارة صندوق سماد مشترك", "شراء السماد من المتجر"], answer: 1, points: 4, tip: "التسميد الجماعي يُعزّز روح المجتمع ويُقلّل النفايات على مستوى الحي." },
+  { text: "لماذا يُعدّ التسميد أفضل من رمي بقايا الطعام في مكبّ النفايات؟", options: ["لأنه أسرع", "لأنه يُنتج غاز الميثان في المكبّ وهو ضار بالمناخ", "لأن المكبّ لا يقبل الطعام"], answer: 1, points: 4, tip: "في المكبّات، بقايا الطعام تُنتج غاز الميثان، أحد غازات الدفيئة الأكثر ضرراً." },
+  { text: "ما النسبة التقريبية للنفايات المنزلية التي يمكن تسميدها؟", options: ["أقل من 5%", "حوالي 30 إلى 50%", "100%"], answer: 1, points: 4, tip: "جزء كبير من نفاياتنا اليومية عضوي ويمكن تحويله لسماد بدلاً من رميه." },
+  { text: "ماذا يحدث للتربة التي تحتوي على سماد عضوي؟", options: ["تصبح صلبة وجافة", "تصبح أكثر خصوبة وتحتفظ بالرطوبة بشكل أفضل", "تفقد كل معادنها"], answer: 1, points: 4, tip: "السماد العضوي يُحسّن بنية التربة ويجعلها أكثر قدرة على دعم نمو النباتات." },
+  { text: "ما المقصود بـ 'الاقتصاد الدائري' في سياق النفايات العضوية؟", options: ["بيع النفايات في الأسواق", "إعادة الموارد الطبيعية إلى دورة الحياة بدلاً من رميها", "حرق النفايات وتحويلها لطاقة فقط"], answer: 1, points: 4, tip: "الاقتصاد الدائري يهدف إلى إغلاق دورة المواد: من الطبيعة، إلى الاستخدام، ثم العودة للطبيعة." },
+];
+
+export const COMPOSTING_QUESTIONS_FR = [
+  { text: "Le compostage, c'est :", options: ["Brûler les déchets organiques", "Transformer les restes alimentaires et végétaux en engrais naturel", "Enfouir du plastique dans le sol"], answer: 1, points: 3, tip: "Le compostage transforme les déchets organiques en une matière nourrissante pour le sol." },
+  { text: "Lequel de ces déchets peut être composté ?", options: ["Les épluchures de banane et légumes", "Une bouteille plastique", "Du verre cassé"], answer: 0, points: 3, tip: "Les déchets organiques comme les épluchures se décomposent facilement et sont idéaux pour le compost." },
+  { text: "Quelle est la différence entre déchets organiques et déchets solides ?", options: ["Il n'y a aucune différence", "Les organiques viennent du vivant et se décomposent ; les solides comme le plastique ne se dégradent pas vite", "Les solides sont meilleurs pour le compost"], answer: 1, points: 3, tip: "Les déchets organiques se biodégradent naturellement, contrairement au plastique ou aux métaux." },
+  { text: "Combien de temps faut-il pour obtenir un bon compost ?", options: ["Un seul jour", "Entre un et trois mois environ", "Dix ans"], answer: 1, points: 3, tip: "Le compostage nécessite du temps et de bonnes conditions : humidité, air et chaleur." },
+  { text: "Vrai ou Faux : Les restes de viande doivent être ajoutés dans un composteur domestique.", options: ["Vrai", "Faux"], answer: 1, points: 3, tip: "Les restes de viande peuvent attirer insectes et rongeurs ; ils ne sont généralement pas recommandés dans un composteur domestique." },
+  { text: "Quel est le rôle des vers de terre dans le compostage ?", options: ["Aucun rôle", "Ils décomposent les matières organiques et accélèrent le compostage", "Ils abîment le compost"], answer: 1, points: 3, tip: "Les vers de terre sont très utiles pour décomposer les déchets organiques et produire un compost riche." },
+  { text: "Le compost obtenu est utilisé pour :", options: ["Alimenter les voitures", "Nourrir le sol et améliorer la croissance des plantes", "Fabriquer du plastique"], answer: 1, points: 3, tip: "Le compost enrichit le sol en minéraux et nutriments bénéfiques pour les plantes." },
+  { text: "Lequel de ces éléments n'est pas compostable ?", options: ["Feuilles mortes", "Mouchoirs usagés", "Piles usagées"], answer: 2, points: 3, tip: "Les piles sont dangereuses, elles ne se décomposent pas et polluent le sol. Elles doivent être déposées dans des points de collecte spéciaux." },
+  { text: "Pour accélérer le compostage, il faut :", options: ["Ajouter de l'eau bouillante seulement", "Mélanger régulièrement et varier les matières", "Fermer hermétiquement le composteur"], answer: 1, points: 3, tip: "Mélanger permet d'aérer le compost et d'accélérer la décomposition biologique." },
+  { text: "Quel est le principal avantage environnemental du compostage ?", options: ["Augmenter la quantité de déchets", "Réduire les déchets envoyés en décharge et enrichir le sol", "Produire plus de plastique"], answer: 1, points: 3, tip: "Le compostage réduit la pression sur les décharges et restitue les nutriments à la nature." },
+  { text: "Les coquilles d'œufs sont bonnes pour le compost car elles :", options: ["Apportent du calcium au sol", "Fabriquent du plastique", "Ne se décomposent jamais"], answer: 0, points: 4, tip: "Les coquilles d'œufs sont riches en calcium, elles se décomposent lentement mais enrichissent beaucoup le sol." },
+  { text: "Quel type de compostage utilise des vers de manière intensive ?", options: ["Le compostage aérobie", "Le vermicompostage", "Le compostage industriel à chaleur"], answer: 1, points: 4, tip: "Le vermicompostage est un système qui utilise des vers spéciaux, appelés vers du compost." },
+  { text: "Qu'est-ce qu'il faut éviter d'ajouter au compost pour protéger la santé du sol ?", options: ["Du marc de café", "Des plantes malades ou infestées", "Des sachets de thé usagés"], answer: 1, points: 4, tip: "Les plantes malades peuvent transmettre des agents pathogènes au sol et aux nouvelles plantes." },
+  { text: "Le compostage collectif dans un quartier, c'est :", options: ["Jeter tous ses déchets au même endroit", "Un groupe de voisins qui gère ensemble un composteur commun", "Acheter du compost en magasin"], answer: 1, points: 4, tip: "Le compostage collectif renforce la solidarité et réduit les déchets à l'échelle du quartier." },
+  { text: "Pourquoi composter est-il meilleur que jeter les restes alimentaires en décharge ?", options: ["Car c'est plus rapide", "Car en décharge, les restes produisent du méthane, un gaz nocif pour le climat", "Car la décharge n'accepte pas la nourriture"], answer: 1, points: 4, tip: "En décharge, les déchets alimentaires produisent du méthane, l'un des gaz à effet de serre les plus nocifs." },
+  { text: "Quelle proportion approximative des déchets ménagers peut être compostée ?", options: ["Moins de 5%", "Environ 30 à 50%", "100%"], answer: 1, points: 4, tip: "Une grande partie de nos déchets quotidiens est organique et peut être transformée en compost." },
+  { text: "Que se passe-t-il pour le sol enrichi par le compost ?", options: ["Il devient dur et sec", "Il devient plus fertile et retient mieux l'humidité", "Il perd tous ses minéraux"], answer: 1, points: 4, tip: "Le compost améliore la structure du sol et le rend plus capable de soutenir la croissance des plantes." },
+  { text: "Qu'est-ce que 'l'économie circulaire' appliquée aux déchets organiques ?", options: ["Vendre les déchets sur les marchés", "Réintégrer les ressources naturelles dans le cycle de vie plutôt que de les jeter", "Brûler les déchets pour produire de l'énergie uniquement"], answer: 1, points: 4, tip: "L'économie circulaire vise à boucler le cycle des matières : de la nature, vers l'usage, puis retour à la nature." },
+];
+
 export function getQuestions(contestId: string, locale: string) {
   const isAr = locale === 'ar';
   if (contestId === '69e51153482488070228f2ce') {
     return isAr ? CLIMATE_QUESTIONS_AR : CLIMATE_QUESTIONS_FR;
+  }
+  if (contestId === '69e51153482488070228f2cd') {
+    return isAr ? COMPOSTING_QUESTIONS_AR : COMPOSTING_QUESTIONS_FR;
   }
   // Default to recycling
   return isAr ? RECYCLING_QUESTIONS_AR : RECYCLING_QUESTIONS_FR;

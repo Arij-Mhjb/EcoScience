@@ -158,12 +158,119 @@ function C1_Frame5({ isAr }: { isAr: boolean }) {
   );
 }
 
-/* ─── Contest 2 Frames (Environment) ─────────────────────────────────────── */
+/* ─── Contest 2 Frames (Composting) ──────────────────────────────────────── */
 
-const C2_TOTAL_FRAMES = 4;
-const C2_TIMINGS = [10000, 15000, 15000, 5000];
+const C2_TOTAL_FRAMES = 5;
+const C2_FRAME_DURATION = 6000;
 
 function C2_Frame0({ isAr }: { isAr: boolean }) {
+  return (
+    <Card className="bg-green-800/20 border-green-600/30">
+      <div className="flex items-center justify-center gap-6 mt-2">
+        <motion.span className="text-8xl select-none" animate={{ y: [0, -10, 0] }} transition={{ duration: 2.5, repeat: Infinity }}>🍌</motion.span>
+        <motion.span className="text-7xl select-none" animate={{ rotate: [-8, 8, -8] }} transition={{ duration: 2, repeat: Infinity }}>🥦</motion.span>
+        <motion.span className="text-8xl select-none" animate={{ y: [0, -10, 0] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}>🍎</motion.span>
+      </div>
+      <FrameTitle>{isAr ? 'بعد الأكل... ماذا نفعل بالبقايا؟' : 'Après le repas... que faire des restes ?'}</FrameTitle>
+      <FrameSub>{isAr ? 'قشور الفاكهة والخضروات تبدو عديمة الفائدة... لكن هل هي كذلك فعلاً؟' : 'Les épluchures et restes végétaux semblent inutiles... mais le sont-ils vraiment ?'}</FrameSub>
+      <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1, type: "spring" }} className="glass border border-white/30 rounded-bubble px-5 py-2">
+        <span className="text-white/90 text-lg font-semibold">{isAr ? 'الرمي؟ أم التحويل إلى شيء مفيد؟ 🤔' : 'Les jeter ? Ou les transformer en quelque chose d\'utile ? 🤔'}</span>
+      </motion.div>
+    </Card>
+  );
+}
+
+function C2_Frame1({ isAr }: { isAr: boolean }) {
+  return (
+    <Card className="bg-amber-800/20 border-amber-600/30">
+      <FrameTitle>{isAr ? 'صندوق التسميد... الحل السحري!' : 'Le composteur... la solution magique !'}</FrameTitle>
+      <div className="flex items-center justify-center gap-8 py-4">
+        <div className="flex flex-col items-center gap-2">
+          {['🍌', '🥦', '☕', '🍂'].map((e, i) => (
+            <motion.span key={i} className="text-3xl" animate={{ x: isAr ? [0, 30, 0] : [0, -30, 0], opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}>{e}</motion.span>
+          ))}
+        </div>
+        <motion.span className="text-5xl" animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>➡️</motion.span>
+        <motion.div className="flex flex-col items-center gap-2 bg-amber-800/30 border-2 border-amber-600/50 rounded-kid p-4" animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2, repeat: Infinity }}>
+          <span className="text-6xl">🗑️</span>
+          <span className="text-white font-bold text-sm">{isAr ? 'صندوق التسميد' : 'Composteur'}</span>
+        </motion.div>
+      </div>
+      <FrameSub>{isAr ? 'نضع بقايا الطعام والنباتات في صندوق خاص... ونترك الطبيعة تعمل!' : 'On place les restes alimentaires et végétaux dans un bac spécial... et on laisse la nature faire le travail !'}</FrameSub>
+    </Card>
+  );
+}
+
+function C2_Frame2({ isAr }: { isAr: boolean }) {
+  return (
+    <Card className="bg-brown-800/20">
+      <FrameTitle>{isAr ? 'الديدان والميكروبات تعمل!' : 'Les vers et microbes au travail !'}</FrameTitle>
+      <div className="relative w-full h-36 flex items-center justify-center overflow-hidden">
+        <motion.div className="absolute w-40 h-40 rounded-full bg-amber-700/30 border-2 border-amber-600/40" animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 3, repeat: Infinity }} />
+        {['🪱', '🦠', '🪱', '🦠', '🪱'].map((e, i) => (
+          <motion.span key={i} className="absolute text-2xl" style={{ left: `${15 + i * 17}%` }}
+            animate={{ y: [-8, 8, -8], rotate: [0, 20, -20, 0] }} transition={{ duration: 1.5 + i * 0.2, repeat: Infinity, delay: i * 0.3 }}>{e}</motion.span>
+        ))}
+      </div>
+      <FrameSub>{isAr ? 'الديدان والبكتيريا تُحلّل المواد العضوية وتحوّلها إلى سماد غني.' : 'Les vers et bactéries décomposent les matières organiques en compost riche.'}</FrameSub>
+      <div className="flex justify-center gap-6">
+        {[{ e: '⏳', l: isAr ? 'بضعة أسابيع' : 'Quelques semaines' }, { e: '💧', l: isAr ? 'رطوبة' : 'Humidité' }, { e: '🔄', l: isAr ? 'تقليب' : 'Mélange' }].map((s, i) => (
+          <div key={i} className="flex flex-col items-center gap-1">
+            <motion.span className="text-3xl" animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}>{s.e}</motion.span>
+            <span className="text-white/80 text-xs font-bold">{s.l}</span>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function C2_Frame3({ isAr }: { isAr: boolean }) {
+  return (
+    <Card className="bg-green-700/20 border-green-500/30">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {[{ e: '🌱', l: '10%' }, { e: '✨', l: '35%' }, { e: '🌿', l: '60%' }, { e: '💚', l: '85%' }].map((c, i) => (
+          <motion.span key={i} className="absolute text-2xl" style={{ left: c.l, top: 0 }} animate={{ y: [0, 500], opacity: [0, 1, 0] }} transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.5 }}>{c.e}</motion.span>
+        ))}
+      </div>
+      <motion.span className="text-8xl relative z-10" animate={{ scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] }} transition={{ duration: 2, repeat: Infinity }}>🌱</motion.span>
+      <FrameTitle>{isAr ? 'وُلد السماد الطبيعي!' : 'Le compost naturel est né !'}</FrameTitle>
+      <FrameSub>{isAr ? 'النفايات العضوية تحوّلت إلى سماد غني يُغذّي التربة ويساعد النباتات على النمو!' : 'Les déchets organiques sont devenus un compost riche qui nourrit le sol et aide les plantes à pousser !'}</FrameSub>
+      <div className="relative z-10"><Turtle mood="celebrating" size="sm" showBubble={false} /></div>
+    </Card>
+  );
+}
+
+function C2_Frame4({ isAr }: { isAr: boolean }) {
+  return (
+    <Card>
+      <FrameTitle>{isAr ? 'التسميد يُنقذ الكوكب!' : 'Le compostage sauve la planète !'}</FrameTitle>
+      <div className="grid grid-cols-2 gap-3 w-full">
+        {[
+          { e: '🏭', before: isAr ? 'مكبّ مليء' : 'Décharge pleine', e2: '🌱', after: isAr ? 'سماد مفيد' : 'Compost utile' },
+          { e: '💨', before: isAr ? 'غاز ميثان' : 'Méthane', e2: '🌍', after: isAr ? 'هواء نظيف' : 'Air propre' },
+        ].map((item, i) => (
+          <div key={i} className="bg-white/10 rounded-kid p-3 flex flex-col items-center gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-3xl opacity-60">{item.e}</span>
+              <motion.span className="text-xl text-white" animate={{ x: isAr ? [-5, 5, -5] : [5, -5, 5] }} transition={{ duration: 1, repeat: Infinity }}>→</motion.span>
+              <span className="text-3xl">{item.e2}</span>
+            </div>
+            <span className="text-white/70 text-xs font-bold text-center">{item.before} → {item.after}</span>
+          </div>
+        ))}
+      </div>
+      <FrameSub>{isAr ? 'بالتسميد، نقلّل النفايات ونُغذّي الأرض — الجميع يربح! 🌍' : 'En compostant, on réduit les déchets et on nourrit la terre — tout le monde gagne ! 🌍'}</FrameSub>
+    </Card>
+  );
+}
+
+/* ─── Contest 3 Frames (Environment/Climate) ─────────────────────────────── */
+
+const C3_TOTAL_FRAMES = 4;
+const C3_TIMINGS = [10000, 15000, 15000, 5000];
+
+function C3_Frame0({ isAr }: { isAr: boolean }) {
   return (
     <Card className="bg-sky-400/20 border-sky-300/30">
       <div className="relative w-full h-40 flex items-center justify-center overflow-hidden">
@@ -182,7 +289,7 @@ function C2_Frame0({ isAr }: { isAr: boolean }) {
   );
 }
 
-function C2_Frame1({ isAr }: { isAr: boolean }) {
+function C3_Frame1({ isAr }: { isAr: boolean }) {
   return (
     <Card className="bg-orange-600/20 border-orange-500/30">
       <div className="relative w-full h-40 flex items-center justify-center">
@@ -200,7 +307,7 @@ function C2_Frame1({ isAr }: { isAr: boolean }) {
   );
 }
 
-function C2_Frame2({ isAr }: { isAr: boolean }) {
+function C3_Frame2({ isAr }: { isAr: boolean }) {
   return (
     <Card className="bg-green-500/20 border-green-400/30">
       <div className="grid grid-cols-2 gap-4 w-full">
@@ -227,10 +334,10 @@ function C2_Frame2({ isAr }: { isAr: boolean }) {
   );
 }
 
-function C2_Frame3({ isAr }: { isAr: boolean }) {
+function C3_Frame3({ isAr }: { isAr: boolean }) {
   return (
     <Card>
-      <motion.div 
+      <motion.div
         initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 1, type: "spring" }}
         className="flex flex-col items-center gap-4"
       >
@@ -267,16 +374,20 @@ export default function OpeningAnimation({ onComplete, contestId }: OpeningAnima
   const [currentFrame, setCurrentFrame] = useState(0);
   const [showFinalMessage, setShowFinalMessage] = useState(false);
 
+  const isComposting = contestId === '69e51153482488070228f2cd';
   const isClimateChange = contestId === '69e51153482488070228f2ce';
-  const totalFrames = isClimateChange ? C2_TOTAL_FRAMES : C1_TOTAL_FRAMES;
-  
+
+  const totalFrames = isClimateChange ? C3_TOTAL_FRAMES : isComposting ? C2_TOTAL_FRAMES : C1_TOTAL_FRAMES;
+
   useEffect(() => {
     if (showFinalMessage) {
       const t = setTimeout(onComplete, FINAL_DELAY);
       return () => clearTimeout(t);
     }
 
-    const duration = isClimateChange ? C2_TIMINGS[currentFrame] : C1_FRAME_DURATION;
+    const duration = isClimateChange
+      ? C3_TIMINGS[currentFrame]
+      : C2_FRAME_DURATION; // C1 and C2 share same duration
 
     if (currentFrame >= totalFrames - 1) {
       const t = setTimeout(() => setShowFinalMessage(true), duration);
@@ -284,13 +395,11 @@ export default function OpeningAnimation({ onComplete, contestId }: OpeningAnima
     }
     const t = setTimeout(() => setCurrentFrame((p) => p + 1), duration);
     return () => clearTimeout(t);
-  }, [currentFrame, showFinalMessage, onComplete, isClimateChange, totalFrames]);
+  }, [currentFrame, showFinalMessage, onComplete, isClimateChange, isComposting, totalFrames]);
 
   const handleSkip = () => {
-    if (currentFrame < totalFrames - 1 || (isClimateChange && !showFinalMessage)) {
-       setCurrentFrame(totalFrames - 1);
-       if (isClimateChange) setShowFinalMessage(true);
-    }
+    setCurrentFrame(totalFrames - 1);
+    setShowFinalMessage(true);
   };
 
   const slideVariants = {
@@ -302,11 +411,11 @@ export default function OpeningAnimation({ onComplete, contestId }: OpeningAnima
   return (
     <div dir={isAr ? "rtl" : "ltr"} className="fixed inset-0 z-50 bg-ocean-gradient flex flex-col overflow-hidden font-cairo">
       {!showFinalMessage && (
-        <motion.button 
+        <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: isClimateChange ? 10 : 0 }}
-          onClick={handleSkip} 
+          onClick={handleSkip}
           className={`absolute top-4 ${isAr ? 'right-4' : 'left-4'} z-50 glass border border-white/30 rounded-kid text-white/90 font-bold text-sm px-4 py-2 hover:bg-white/25 active:scale-95 transition-all flex items-center gap-2`}
         >
           <span>{isAr ? 'تخطي' : 'Passer'}</span>
@@ -322,10 +431,18 @@ export default function OpeningAnimation({ onComplete, contestId }: OpeningAnima
             <motion.div key={currentFrame} variants={slideVariants} custom={isAr ? 1 : -1} initial="enter" animate="center" exit="exit" transition={{ duration: 0.5 }} className="w-full flex justify-center">
               {isClimateChange ? (
                 <>
+                  {currentFrame === 0 && <C3_Frame0 isAr={isAr} />}
+                  {currentFrame === 1 && <C3_Frame1 isAr={isAr} />}
+                  {currentFrame === 2 && <C3_Frame2 isAr={isAr} />}
+                  {currentFrame === 3 && <C3_Frame3 isAr={isAr} />}
+                </>
+              ) : isComposting ? (
+                <>
                   {currentFrame === 0 && <C2_Frame0 isAr={isAr} />}
                   {currentFrame === 1 && <C2_Frame1 isAr={isAr} />}
                   {currentFrame === 2 && <C2_Frame2 isAr={isAr} />}
                   {currentFrame === 3 && <C2_Frame3 isAr={isAr} />}
+                  {currentFrame === 4 && <C2_Frame4 isAr={isAr} />}
                 </>
               ) : (
                 <>
@@ -352,4 +469,3 @@ export default function OpeningAnimation({ onComplete, contestId }: OpeningAnima
     </div>
   );
 }
-

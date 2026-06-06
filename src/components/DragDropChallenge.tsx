@@ -39,6 +39,33 @@ const CLIMATE_ITEMS = [
   { id: "fire", ar: "حرق الغابة", fr: "Feu de forêt", emoji: "🔥" },
 ];
 
+const COMPOSTING_ITEMS = [
+  { id: "orange_peel", ar: "قشرة برتقال", fr: "Épluchure d'orange", emoji: "🍊" },
+  { id: "plastic_bag", ar: "كيس بلاستيك", fr: "Sac plastique", emoji: "🛍️" },
+  { id: "coffee", ar: "قهوة مستعملة", fr: "Marc de café", emoji: "☕" },
+  { id: "battery", ar: "بطارية", fr: "Pile usagée", emoji: "🔋" },
+  { id: "leaves", ar: "أوراق الشجر", fr: "Feuilles mortes", emoji: "🍂" },
+  { id: "glass_bottle", ar: "زجاجة زجاج", fr: "Bouteille en verre", emoji: "🫙" },
+  { id: "egg_shell", ar: "قشور البيض", fr: "Coquilles d'œufs", emoji: "🥚" },
+  { id: "tin_can", ar: "علبة معدنية", fr: "Boîte de conserve", emoji: "🥫" },
+];
+
+const COMPOSTING_ZONES = [
+  { id: "compostable", ar: "قابل للتسميد ♻️", fr: "Compostable ♻️", emoji: "🌱", color: "bg-green-100 border-green-400" },
+  { id: "non_compostable", ar: "غير قابل للتسميد ❌", fr: "Non compostable ❌", emoji: "🚫", color: "bg-red-100 border-red-400" },
+];
+
+const COMPOSTING_ANSWERS: Record<string, string> = {
+  orange_peel: "compostable",
+  plastic_bag: "non_compostable",
+  coffee: "compostable",
+  battery: "non_compostable",
+  leaves: "compostable",
+  glass_bottle: "non_compostable",
+  egg_shell: "compostable",
+  tin_can: "non_compostable",
+};
+
 const RECYCLING_ZONES = [
   { id: "paper", ar: "ورق / كرتون", fr: "Papier / Carton", emoji: "📄", color: "bg-yellow-100 border-yellow-400" },
   { id: "glass", ar: "زجاج", fr: "Verre", emoji: "🫙", color: "bg-blue-100 border-blue-400" },
@@ -74,10 +101,11 @@ export default function DragDropChallenge({
   contestId,
   onComplete,
 }: DragDropChallengeProps) {
+  const isComposting = contestId === '69e51153482488070228f2cd';
   const isClimate = contestId === '69e51153482488070228f2ce';
-  const ITEMS_DATA = isClimate ? CLIMATE_ITEMS : RECYCLING_ITEMS;
-  const ZONES_DATA = isClimate ? CLIMATE_ZONES : RECYCLING_ZONES;
-  const CORRECT_ANSWERS = isClimate ? CLIMATE_ANSWERS : RECYCLING_ANSWERS;
+  const ITEMS_DATA = isClimate ? CLIMATE_ITEMS : isComposting ? COMPOSTING_ITEMS : RECYCLING_ITEMS;
+  const ZONES_DATA = isClimate ? CLIMATE_ZONES : isComposting ? COMPOSTING_ZONES : RECYCLING_ZONES;
+  const CORRECT_ANSWERS = isClimate ? CLIMATE_ANSWERS : isComposting ? COMPOSTING_ANSWERS : RECYCLING_ANSWERS;
 
   const { t, locale } = useLanguage();
   const isAr = locale === 'ar';

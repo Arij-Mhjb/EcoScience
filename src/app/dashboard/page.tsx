@@ -19,6 +19,7 @@ interface Contest {
   descriptionFr?: string;
   image: string;
   order: number;
+  isActive?: boolean;
 }
 
 interface UserProgress {
@@ -94,25 +95,31 @@ export default function DashboardPage() {
     }
   };
 
+  // IDs des concours à forcer actifs côté frontend
+  const FORCED_ACTIVE = new Set([
+    '69e51150482488070228f2b8', // Recyclage
+    '69e51153482488070228f2cd', // Compostage
+  ]);
+
   // Données fallback si l'API n'est pas encore connectée
   const displayContests = contests.length > 0 ? contests.map(c => {
-    const isLocked = c.id === '69e51150482488070228f2b8' || c.id === '69e51153482488070228f2cd';
+    const isActive = FORCED_ACTIVE.has(c.id) ? true : c.isActive ?? false;
     if (!isAr && !c.titleFr && SYSTEM_CONTESTS[c.id]) {
-      return { ...c, titleFr: SYSTEM_CONTESTS[c.id].title, descriptionFr: SYSTEM_CONTESTS[c.id].description, isActive: !isLocked };
+      return { ...c, isActive, titleFr: SYSTEM_CONTESTS[c.id].title, descriptionFr: SYSTEM_CONTESTS[c.id].description };
     }
-    return { ...c, isActive: !isLocked };
+    return { ...c, isActive };
   }) : [
     { 
       id: '69e51150482488070228f2b8', 
       title: locale === 'ar' ? '♻️ إعادة تدوير المواد' : '♻️ Recyclage des matériaux', 
       description: locale === 'ar' ? 'تعلّم كيفية فرز النفايات وإعادة تدوير المواد لحماية البيئة' : 'Apprends à trier les déchets et recycler les matériaux pour protéger l\'environnement', 
-      image: '/images/contest-recycling.svg', order: 1, isActive: false
+      image: '/images/contest-recycling.svg', order: 1, isActive: true
     },
     { 
       id: '69e51153482488070228f2cd', 
       title: locale === 'ar' ? '🌱 التسميد وتدبير النفايات العضوية' : '🌱 Compostage et gestion bio', 
       description: locale === 'ar' ? 'اكتشف كيف تتحول النفايات العضوية إلى سماد طبيعي مفيد' : 'Découvre comment des déchets organiques se transforment en compost naturel utile', 
-      image: '/images/contest-compost.svg', order: 2, isActive: false
+      image: '/images/contest-compost.svg', order: 2, isActive: true
     },
     { 
       id: '69e51153482488070228f2ce', 
